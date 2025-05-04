@@ -10,6 +10,8 @@ public class MainApp {
         OrderCustomizationManager orderManager = new OrderCustomizationManager();
         TaskSchedulerManager taskScheduler = new TaskSchedulerManager();
         InventoryManager inventoryManager = new InventoryManager(); 
+        BillingSystem billingSystem = new BillingSystem(); 
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("**** Welcome to Special Cook Project Management System ****");
@@ -33,7 +35,13 @@ public class MainApp {
             System.out.println("15. Check if restocking is needed");  
             System.out.println("16. Fetch supplier prices");          
             System.out.println("17. Generate automatic purchase order");
-            System.out.println("18. Exit");
+            System.out.println("18. Complete Order (Billing)");
+            System.out.println("19. Finalize Order (Billing)");
+            System.out.println("20. Generate and Send Invoice");
+            System.out.println("21. Admin Login for Financial Reports");
+            System.out.println("22. Request Financial Data");
+            System.out.println("23. Display Financial Reports");
+            System.out.println("0. Exit");
 
             System.out.print("\nEnter your choice: ");
             int choice = scanner.nextInt();
@@ -147,6 +155,30 @@ public class MainApp {
                     break;
 
                 case 18:
+                    billingSystem.completeOrder();
+                    break;
+
+                case 19:
+                    billingSystem.finalizeOrder();
+                    break;
+
+                case 20:
+                    billingSystem.generateAndSendInvoice();
+                    break;
+
+                case 21:
+                    billingSystem.adminLogin();
+                    break;
+
+                case 22:
+                    billingSystem.requestFinancialData();
+                    break;
+
+                case 23:
+                    billingSystem.displayFinancialReports();
+                    break;
+
+                case 0:
                     System.out.println("Exiting system. Goodbye!");
                     scanner.close();
                     System.exit(0);
