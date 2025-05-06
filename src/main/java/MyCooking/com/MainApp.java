@@ -1,5 +1,7 @@
 package MyCooking.com;
 
+import MyCooking.com.models.*;
+
 import java.util.*;
 
 public class MainApp {
@@ -10,6 +12,12 @@ public class MainApp {
         "tomato", "potato", "onion", "lettuce", "cheese", "chicken", "beef",
         "milk", "almond milk", "vegan cheese", "tofu", "carrot", "pepper", "egg"
     ));
+    private static List<Chef> chefs = Arrays.asList(
+        new Chef("Ali", "Grill"),
+        new Chef("Sara", "Vegan"),
+        new Chef("Default Chef", "General")
+    );
+    private static TaskScheduler scheduler = new TaskScheduler(chefs);
 
     public static void main(String[] args) {
         initializeSubstitutions();
@@ -20,7 +28,7 @@ public class MainApp {
             System.out.println("2. View past orders");
             System.out.println("3. Suggest personalized meal plan");
             System.out.println("4. Customize meal order");
-            System.out.println("5. Chef Interface");
+            System.out.println("5. Chef Interface (View Assigned Tasks)");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
             int option = Integer.parseInt(scanner.nextLine());
@@ -42,7 +50,6 @@ public class MainApp {
                     chefInterface();
                     break;
                 case 0:
-                	  
                     System.exit(0);
                     break;
                 default:
@@ -60,34 +67,19 @@ public class MainApp {
 
     private static void managePreferences() {
         System.out.println("\n--- Manage Profile ---");
-        System.out.println("1. Enter dietary preference and allergy");
-        System.out.println("2. View preferences and allergies");
-        System.out.print("Choose an option: ");
-        int choice = Integer.parseInt(scanner.nextLine());
+        System.out.print("Enter your customer ID: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        customers.putIfAbsent(id, new Customer(String.valueOf(id), "User" + id, "0000000000"));
+        Customer customer = customers.get(id);
 
-        if (choice == 1) {
-            System.out.print("Enter your customer ID: ");
-            int id = Integer.parseInt(scanner.nextLine());
-            System.out.print("Enter dietary preference (e.g., Vegan): ");
-            String pref = scanner.nextLine();
-            System.out.print("Enter allergy (e.g., Peanut allergy): ");
-            String allergy = scanner.nextLine();
-            customers.putIfAbsent(id, new Customer(id));
-            Customer customer = customers.get(id);
-            customer.setDietaryPreference(pref);
-            customer.setAllergy(allergy);
-            System.out.println("Preferences saved successfully!");
-        } else if (choice == 2) {
-            System.out.print("Enter your customer ID: ");
-            int id = Integer.parseInt(scanner.nextLine());
-            Customer customer = customers.get(id);
-            if (customer != null) {
-                System.out.println("Preference: " + customer.getDietaryPreference());
-                System.out.println("Allergy: " + customer.getAllergy());
-            } else {
-                System.out.println("Customer not found.");
-            }
-        }
+        System.out.print("Enter dietary preference (e.g., Vegan): ");
+        String pref = scanner.nextLine();
+        System.out.print("Enter allergy (e.g., Peanut allergy): ");
+        String allergy = scanner.nextLine();
+
+        customer.setDietaryPreference(pref);
+        customer.setAllergy(allergy);
+        System.out.println("Preferences saved successfully!");
     }
 
     private static void viewPastOrders() {
@@ -96,7 +88,7 @@ public class MainApp {
         Customer customer = customers.get(id);
         if (customer != null) {
             System.out.println("\n--- View Past Orders ---");
-            List<String> orders = customer.getPastOrders();
+            List<String> orders = customer.getOrderHistory();
             if (orders.isEmpty()) {
                 System.out.println("No past orders found.");
             } else {
@@ -116,6 +108,8 @@ public class MainApp {
         if (customer != null) {
             System.out.println("--- Personalized Meal Plan ---");
             System.out.println("Based on your preferences, here are some meal suggestions...");
+            System.out.println("- Vegan Salad (lettuce, tomato, carrot)");
+            System.out.println("- Tofu Stir Fry (tofu, pepper, onion)");
         } else {
             System.out.println("Customer not found.");
         }
@@ -131,431 +125,58 @@ public class MainApp {
             return;
         }
 
-        System.out.println("Starting a new meal request...");
-        List<String> ingredients = new ArrayList<>();
+        Meal meal = new Meal("Custom Meal");
         for (int i = 1; i <= 3; i++) {
             System.out.print("Enter ingredient " + i + ": ");
-            String ing = scanner.nextLine();
+            String ingName = scanner.nextLine();
 
-            if (!ALLOWED_INGREDIENTS.contains(ing)) {
-                System.out.println("Invalid or unavailable ingredient: " + ing);
+            if (!ALLOWED_INGREDIENTS.contains(ingName)) {
+                System.out.println("Invalid or unavailable ingredient: " + ingName);
                 continue;
             }
 
-            if (customer.getDietaryPreference().toLowerCase().contains("vegan") ||
-                customer.getAllergy().toLowerCase().contains("lactose")) {
-                if (substitutionMap.containsKey(ing)) {
-                    String sub = substitutionMap.get(ing);
-                    System.out.println("Ingredient '" + ing + "' substituted with '" + sub + "' due to dietary preference.");
-                    ing = sub;
+            if ((customer.getDietaryPreference() != null && customer.getDietaryPreference().toLowerCase().contains("vegan")) ||
+                (customer.getAllergy() != null && customer.getAllergy().toLowerCase().contains("lactose"))) {
+                if (substitutionMap.containsKey(ingName)) {
+                    String substitute = substitutionMap.get(ingName);
+                    System.out.println("Substituting '" + ingName + "' with '" + substitute + "' due to restrictions.");
+                    ingName = substitute;
+                    new NotificationService().sendAlertToChef(meal);
                 }
             }
-            ingredients.add(ing);
+
+            Ingredient ing = new Ingredient(ingName, true, false);
+            meal.addIngredient(ing);
         }
 
-        System.out.println("Ingredients selected: " + String.join(", ", ingredients));
-        customer.addOrder("Custom meal with: " + String.join(", ", ingredients));
-        System.out.println("Meal saved with ingredients: " + ingredients);
+        String assignedChefName = scheduler.assignTaskToChefAndReturnName(meal);
+        customer.addToOrderHistory("Ordered: " + meal.getMealName() +
+            " with ingredients: " + meal.getIngredients() +
+            " | Assigned Chef: " + assignedChefName);
+
+        System.out.println("Order saved and assigned to chef.");
     }
 
     private static void chefInterface() {
         System.out.println("\n--- Chef Interface ---");
-        for (Customer c : customers.values()) {
-            System.out.println("Customer ID: " + c.getId());
-            System.out.println("  Dietary Preference: " + c.getDietaryPreference());
-            System.out.println("  Allergy: " + c.getAllergy());
-            System.out.println("  Order History:");
-            for (String order : c.getPastOrders()) {
-                System.out.println("    - " + order);
+        for (Chef chef : chefs) {
+            System.out.println("Chef: " + chef.getName() + " [" + chef.getSpecialization() + "]");
+            List<Meal> tasks = chef.getAssignedMeals();
+            if (tasks.isEmpty()) {
+                System.out.println("  No tasks assigned.");
+            } else {
+                for (Meal task : tasks) {
+                    System.out.println("  - Meal: " + task.getMealName());
+                }
             }
         }
     }
 }
 
-class Customer {
-    private int id;
-    private String dietaryPreference = "";
-    private String allergy = "";
-    private List<String> pastOrders = new ArrayList<>();
 
-    public Customer(int id) {
-        this.id = id;
-    }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setDietaryPreference(String dietaryPreference) {
-        this.dietaryPreference = dietaryPreference;
-    }
 
-    public String getDietaryPreference() {
-        return dietaryPreference;
-    }
-
-    public void setAllergy(String allergy) {
-        this.allergy = allergy;
-    }
-
-    public String getAllergy() {
-        return allergy;
-    }
-
-    public void addOrder(String order) {
-        pastOrders.add(order);
-    }
-
-    public List<String> getPastOrders() {
-        return pastOrders;
-    }
-}
-
-
-
-/*package MyCooking.com;
-
-import java.util.Scanner;
-
-import MyCooking.com.models.Customer;
-import MyCooking.com.models.CustomerManager;
-
-public class MainApp {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        CustomerManager customerManager = new CustomerManager();
-        OrderCustomizationManager customizationManager = new OrderCustomizationManager(customerManager);
-
-        // Sample customer
-        System.out.print("Enter customer name: ");
-        String customerName = scanner.nextLine();
-        System.out.print("Enter customer ID: ");
-        String customerId = scanner.nextLine();
-        System.out.print("Enter customer phone: ");
-        String customerPhone = scanner.nextLine();
-
-        Customer customer = new Customer(customerId, customerName, customerPhone);
-        customerManager.addCustomer(customer);
-
-        System.out.println("=== Welcome to Special Cook Project Management System ===");
-
-        boolean running = true;
-        while (running) {
-            System.out.println("\nMain Menu:");
-            System.out.println("1. Manage dietary preferences and allergies");
-            System.out.println("2. View past orders");
-            System.out.println("3. Suggest personalized meal plan");
-            System.out.println("4. Customize meal order");
-            System.out.println("0. Exit");
-
-            System.out.print("Choose an option: ");
-            String input = scanner.nextLine();
-
-            switch (input) {
-                case "1":
-                    System.out.println("\n--- Manage Profile ---");
-                    System.out.println("1. Enter dietary preference and allergy");
-                    System.out.println("2. View preferences and allergies");
-                    System.out.print("Choose an option: ");
-                    String subChoice = scanner.nextLine();
-
-                    if (subChoice.equals("1")) {
-                        System.out.print("Enter dietary preference (e.g., Vegan): ");
-                        String diet = scanner.nextLine();
-                        System.out.print("Enter allergy (e.g., Peanut allergy): ");
-                        String allergy = scanner.nextLine();
-                        customer.setDietaryPreference(diet);
-                        customer.setAllergy(allergy);
-                        System.out.println("Preferences saved successfully!");
-                    } else if (subChoice.equals("2")) {
-                        customerManager.displayCustomerInfo(customer);
-                    } else {
-                        System.out.println("Invalid choice.");
-                    }
-                    break;
-
-                case "2":
-                    System.out.println("\n--- View Past Orders ---");
-                    customerManager.displayOrderHistory(customer);
-                    break;
-
-                case "3":
-                    System.out.println("\n--- Personalized Meal Plan ---");
-                    System.out.println("Based on your preferences, here are some meal suggestions...");
-                    // Add logic for personalized meal plan suggestion
-                    break;
-
-                case "4":
-                    System.out.println("\n--- Customize Meal Order ---");
-                    customizationManager.startMealRequest();
-                    System.out.print("Enter ingredient 1: ");
-                    String ing1 = scanner.nextLine();
-                    System.out.print("Enter ingredient 2: ");
-                    String ing2 = scanner.nextLine();
-                    System.out.print("Enter ingredient 3: ");
-                    String ing3 = scanner.nextLine();
-                    customizationManager.selectIngredients(ing1, ing2, ing3);
-                    customizationManager.saveMeal();
-                    break;
-
-                case "0":
-                    running = false;
-                    System.out.println("Exiting application...");
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-
-        scanner.close();
-    }
-}
-*/
-
-/*package MyCooking.com;
-
-import MyCooking.com.models.Customer;
-import MyCooking.com.models.Order;
-import java.util.Scanner;
-
-public class MainApp {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        // إنشاء كائنات مدير ملف التعريف ومدير تخصيص الوجبات
-        CustomerProfileManager profileManager = new CustomerProfileManager();
-        OrderCustomizationManager customizationManager = new OrderCustomizationManager();
-
-        // طلب بيانات العميل
-        System.out.print("Enter customer name: ");
-        String customerName = scanner.nextLine();
-        System.out.print("Enter customer ID: ");
-        String customerId = scanner.nextLine();
-
-        // إنشاء العميل وتخزينه
-        Customer customer = new Customer(customerId, customerName, "Not Provided");
-        profileManager.addCustomer(customer);
-
-        boolean running = true;
-
-        System.out.println("=== Welcome to Special Cook Project Management System ===");
-
-        while (running) {
-            System.out.println("\nMain Menu:");
-            System.out.println("1. Manage dietary preferences and allergies");
-            System.out.println("2. View past orders");
-            System.out.println("3. Suggest personalized meal plan");
-            System.out.println("4. Customize meal order");
-            System.out.println("0. Exit");
-
-            System.out.print("Choose an option: ");
-            String input = scanner.nextLine();
-
-            switch (input) {
-                case "1":
-                    // إدارة التفضيلات الغذائية والحساسيات
-                    System.out.println("\n--- Manage Profile ---");
-                    System.out.println("1. Enter dietary preference and allergy");
-                    System.out.println("2. View preferences and allergies");
-                    System.out.print("Choose an option: ");
-                    String subChoice = scanner.nextLine();
-
-                    if (subChoice.equals("1")) {
-                        // إدخال التفضيلات الغذائية والحساسيات
-                        System.out.print("Enter dietary preference (e.g., Vegan): ");
-                        String diet = scanner.nextLine();
-                        System.out.print("Enter allergy (e.g., Peanut allergy): ");
-                        String allergy = scanner.nextLine();
-                        profileManager.storePreferences(customerId, diet, allergy);
-                        System.out.println("Preferences saved successfully!");
-                    } else if (subChoice.equals("2")) {
-                        // عرض التفضيلات والحساسيات
-                        profileManager.viewPreferences(customerId);
-                    } else {
-                        System.out.println("Invalid choice.");
-                    }
-                    break;
-
-                case "2":
-                    // عرض الطلبات السابقة
-                    System.out.println("\n--- View Past Orders ---");
-                    profileManager.displayOrderHistory(customerId);
-                    break;
-
-                case "3":
-                    // اقتراح خطة وجبات مخصصة
-                    System.out.println("\n--- Personalized Meal Plan ---");
-                    profileManager.suggestPersonalizedMeals(customerId);
-                    break;
-
-                case "4":
-                    // تخصيص طلب الوجبة
-                    System.out.println("\n--- Customize Meal Order ---");
-                    customizationManager.customizeMeal(customerId);
-                    break;
-
-                case "0":
-                    // إنهاء التطبيق
-                    running = false;
-                    System.out.println("Exiting application...");
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-
-        scanner.close();
-    }
-}
-
-
-
-/*package MyCooking.com;
-
-import MyCooking.com.CustomerProfileManager;
-import MyCooking.com.OrderCustomizationManager;
-
-import java.util.Scanner;
-
-public class MainApp {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        CustomerProfileManager profileManager = new CustomerProfileManager();
-        OrderCustomizationManager customizationManager = new OrderCustomizationManager();
-
-        String customerId = "customer1";
-        boolean running = true;
-
-        System.out.println("=== Welcome to Special Cook Project Management System ===");
-
-        while (running) {
-            System.out.println("\nMain Menu:");
-            System.out.println("1. Manage dietary preferences and allergies");
-            System.out.println("2. View past orders");
-            System.out.println("3. Suggest personalized meal plan");
-            System.out.println("4. Customize meal order");
-            System.out.println("0. Exit");
-
-            System.out.print("Choose an option: ");
-            String input = scanner.nextLine();
-
-            switch (input) {
-                case "1":
-                    System.out.println("\n--- Manage Profile ---");
-                    System.out.println("1. Enter dietary preference and allergy");
-                    System.out.println("2. View preferences and allergies");
-                    System.out.print("Choose an option: ");
-                    String subChoice = scanner.nextLine();
-
-                    if (subChoice.equals("1")) {
-                        System.out.print("Enter dietary preference (e.g., Vegan): ");
-                        String diet = scanner.nextLine();
-                        System.out.print("Enter allergy (e.g., Peanut allergy): ");
-                        String allergy = scanner.nextLine();
-                        profileManager.storePreferences(customerId, diet, allergy);
-                    } else if (subChoice.equals("2")) {
-                        profileManager.viewPreferences(customerId);
-                    } else {
-                        System.out.println("Invalid choice.");
-                    }
-                    break;
-
-                case "2":
-                    profileManager.displayOrderHistory(customerId);
-                    break;
-
-                case "3":
-                    profileManager.suggestPersonalizedMeals(customerId);
-                    break;
-
-                case "4":
-                   customizationManager.customizeMeal();
-                    break;
-
-                case "0":
-                    running = false;
-                    System.out.println("Exiting application...");
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-
-        scanner.close();
-    }
-}
-
-/*
-
-
-/*
-package MyCooking.com;
-
-
-import MyCooking.com.CustomerProfileManager;
-
-import java.util.Scanner;
-
-public class MainApp {
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        CustomerProfileManager profileManager = new CustomerProfileManager();
-
-        String customerId = "customer1";
-        boolean running = true;
-
-        System.out.println("=== Welcome to Special Cook Project Management System ===");
-
-        while (running) {
-            System.out.println("\nMenu:");
-            System.out.println("1. Enter dietary preferences and allergies");
-            System.out.println("2. View preferences and allergies");
-            System.out.println("3. View past orders");
-            System.out.println("4. Suggest personalized meal plan");
-            System.out.println("0. Exit");
-
-            System.out.print("Choose an option: ");
-            int choice = Integer.parseInt(scanner.nextLine());
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter dietary preference (e.g., Vegan): ");
-                    String diet = scanner.nextLine();
-                    System.out.print("Enter allergy (e.g., Peanut allergy): ");
-                    String allergy = scanner.nextLine();
-                    profileManager.storePreferences(customerId, diet, allergy);
-                    break;
-
-                case 2:
-                    profileManager.viewPreferences(customerId);
-                    break;
-
-                case 3:
-                    profileManager.displayOrderHistory(customerId);
-                    break;
-
-                case 4:
-                    profileManager.suggestPersonalizedMeals(customerId);
-                    break;
-
-                case 0:
-                    running = false;
-                    System.out.println("Exiting application...");
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-
-        scanner.close();
-    }
-}
-*/
 /*import java.util.Scanner;
 
 public class MainApp {
