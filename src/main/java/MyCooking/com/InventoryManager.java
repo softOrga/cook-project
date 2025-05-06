@@ -1,90 +1,100 @@
 package MyCooking.com;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InventoryManager {
 
-    private Map<String, Integer> inventory = new HashMap<>();
+    private Map<String, Integer> stock = new HashMap<>();
+    private Map<String, Double> supplierPrices = new HashMap<>();
 
     public InventoryManager() {
-        inventory.put("Tomatoes", 5);
-        inventory.put("Basil", 2);
-        inventory.put("Pasta", 10);
+        stock.put("Tomato", 50);
+        stock.put("Cheese", 30);
+        stock.put("Olive Oil", 20);
+        supplierPrices.put("Tomato", 0.5);
+        supplierPrices.put("Cheese", 1.2);
+        supplierPrices.put("Olive Oil", 2.5);
     }
 
     public void monitorStock() {
-        System.out.println("Monitoring current inventory levels...");
-        inventory.forEach((ingredient, quantity) ->
-                System.out.println("- " + ingredient + ": " + quantity + " units"));
+        System.out.println("Current Stock Levels:");
+        for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    public void useIngredient(String ingredient, int quantity) {
+        if (stock.containsKey(ingredient)) {
+            int currentStock = stock.get(ingredient);
+            if (currentStock >= quantity) {
+                stock.put(ingredient, currentStock - quantity);
+                System.out.println(quantity + " units of " + ingredient + " used.");
+            } else {
+                System.out.println("Not enough " + ingredient + " in stock.");
+            }
+        } else {
+            System.out.println("Ingredient not found.");
+        }
+    }
+
+    public void checkForRestocking() {
+        System.out.println("Checking for ingredients to restock:");
+        for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+            if (entry.getValue() < 10) {
+                System.out.println(entry.getKey() + " needs restocking.");
+            }
+        }
+    }
+
+    public void fetchSupplierPrices() {
+        System.out.println("Supplier Prices:");
+        for (Map.Entry<String, Double> entry : supplierPrices.entrySet()) {
+            System.out.println(entry.getKey() + ": $" + entry.getValue());
+        }
+    }
+
+    public void generatePurchaseOrder() {
+        System.out.println("Generating Purchase Order:");
+        for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+            if (entry.getValue() < 10) {
+                String ingredient = entry.getKey();
+                int orderQty = 50 - entry.getValue();
+                double price = supplierPrices.getOrDefault(ingredient, 1.0);
+                double cost = price * orderQty;
+                System.out.println("Ordering " + orderQty + " units of " + ingredient + " for $" + cost);
+                stock.put(ingredient, 50);
+            }
+        }
     }
 
     public void checkStock(String ingredient) {
-        Integer quantity = inventory.getOrDefault(ingredient, 0);
-        if (quantity <= 3) { 
-            System.out.println("Stock of " + ingredient + " is low (" + quantity + " units)!");
+        if (stock.containsKey(ingredient)) {
+            int qty = stock.get(ingredient);
+            System.out.println("Stock for " + ingredient + ": " + qty + " units.");
         } else {
-            System.out.println(" Stock of " + ingredient + " is sufficient (" + quantity + " units).");
+            System.out.println("Ingredient " + ingredient + " not found in stock.");
         }
     }
 
     public void suggestRestocking() {
-        System.out.println("Checking ingredients that need restocking...");
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
-            if (entry.getValue() <= 3) {
-                System.out.println("Suggest restocking: " + entry.getKey());
+        System.out.println("Suggesting restocking for low stock items:");
+        for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+            if (entry.getValue() < 15) {
+                System.out.println("- " + entry.getKey());
             }
         }
     }
 
     public void openPurchasingInterface() {
-        System.out.println("Purchasing interface is now open for manager.");
-    }
-
-    public void fetchSupplierPrices() {
-        System.out.println("Fetching real-time supplier prices...");
+        System.out.println("Opening purchasing interface... Ready to place orders.");
     }
 
     public void detectCriticalStock() {
-        System.out.println("Detecting critical stock levels...");
-        for (String ingredient : inventory.keySet()) {
-            if (inventory.get(ingredient) <= 2) {
-                System.out.println("Critical low stock detected for: " + ingredient);
+        System.out.println("Detecting critical stock levels:");
+        for (Map.Entry<String, Integer> entry : stock.entrySet()) {
+            if (entry.getValue() < 5) {
+                System.out.println("CRITICAL: " + entry.getKey() + " is below critical level!");
             }
         }
     }
-
-    public void generatePurchaseOrder() {
-        System.out.println("Generating automatic purchase order for low stock ingredients...");
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
-            if (entry.getValue() <= 2) {
-                System.out.println("Purchase order generated for: " + entry.getKey());
-            }
-        }
-    }
-    public void useIngredient(String ingredient, int quantity) {
-        if (inventory.containsKey(ingredient)) {
-            int currentStock = inventory.get(ingredient);
-            if (currentStock >= quantity) {
-                inventory.put(ingredient, currentStock - quantity);
-                System.out.println(" Used " + quantity + " units of " + ingredient + ".");
-            } else {
-                System.out.println(" Not enough " + ingredient + " in stock to use " + quantity + " units.");
-            }
-        } else {
-            System.out.println("Ingredient not found in inventory: " + ingredient);
-        }
-    }
-
-    public void checkForRestocking() {
-        boolean restockingNeeded = false;
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
-            if (entry.getValue() <= 3) {
-                System.out.println(" Restocking needed for: " + entry.getKey());
-                restockingNeeded = true;
-            }
-        }
-        if (!restockingNeeded) {
-            System.out.println(" No restocking needed at the moment.");
-        }
-}}
+}

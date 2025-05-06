@@ -1,6 +1,68 @@
 package MyCooking.com;
 
+
+import MyCooking.com.CustomerProfileManager;
+
 import java.util.Scanner;
+
+public class MainApp {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CustomerProfileManager profileManager = new CustomerProfileManager();
+
+        String customerId = "customer1";
+        boolean running = true;
+
+        System.out.println("=== Welcome to Special Cook Project Management System ===");
+
+        while (running) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Enter dietary preferences and allergies");
+            System.out.println("2. View preferences and allergies");
+            System.out.println("3. View past orders");
+            System.out.println("4. Suggest personalized meal plan");
+            System.out.println("0. Exit");
+
+            System.out.print("Choose an option: ");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter dietary preference (e.g., Vegan): ");
+                    String diet = scanner.nextLine();
+                    System.out.print("Enter allergy (e.g., Peanut allergy): ");
+                    String allergy = scanner.nextLine();
+                    profileManager.storePreferences(customerId, diet, allergy);
+                    break;
+
+                case 2:
+                    profileManager.viewPreferences(customerId);
+                    break;
+
+                case 3:
+                    profileManager.displayOrderHistory(customerId);
+                    break;
+
+                case 4:
+                    profileManager.suggestPersonalizedMeals(customerId);
+                    break;
+
+                case 0:
+                    running = false;
+                    System.out.println("Exiting application...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+/*import java.util.Scanner;
 
 public class MainApp {
 
@@ -45,49 +107,43 @@ public class MainApp {
 
             System.out.print("\nEnter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
                     System.out.print("Enter customer ID: ");
                     String customerId = scanner.nextLine();
-                    System.out.print("Enter dietary preference (e.g., Vegan, Vegetarian): ");
+                    System.out.print("Enter dietary preference: ");
                     String diet = scanner.nextLine();
-                    System.out.print("Enter allergy (e.g., Peanut allergy, Gluten allergy): ");
+                    System.out.print("Enter allergy: ");
                     String allergy = scanner.nextLine();
                     customerManager.storePreferences(customerId, diet, allergy);
                     break;
-
                 case 2:
                     System.out.print("Enter customer ID: ");
                     String customerIdForOrder = scanner.nextLine();
-                    System.out.print("Enter order details (ingredients separated by commas): ");
+                    System.out.print("Enter order details: ");
                     String order = scanner.nextLine();
                     customerManager.addOrder(customerIdForOrder, order);
                     break;
-
                 case 3:
                     System.out.print("Enter customer ID: ");
                     String customerIdForHistory = scanner.nextLine();
                     customerManager.displayOrderHistory(customerIdForHistory);
                     break;
-
                 case 4:
                     System.out.print("Enter customer ID: ");
                     String customerIdForPrefs = scanner.nextLine();
                     customerManager.viewPreferences(customerIdForPrefs);
                     break;
-
                 case 5:
                     System.out.print("Enter customer ID: ");
                     String customerIdForSuggestions = scanner.nextLine();
                     customerManager.suggestPersonalizedMeals(customerIdForSuggestions);
                     break;
-
                 case 6:
                     orderManager.startMealRequest();
                     break;
-
                 case 7:
                     System.out.print("Enter first ingredient: ");
                     String ing1 = scanner.nextLine();
@@ -97,23 +153,19 @@ public class MainApp {
                     String ing3 = scanner.nextLine();
                     orderManager.selectIngredients(ing1, ing2, ing3);
                     break;
-
                 case 8:
                     orderManager.saveMeal();
                     orderManager.validateIngredients();
                     orderManager.confirmMeal();
                     break;
-
                 case 9:
                     orderManager.selectUnavailableIngredient();
                     break;
-
                 case 10:
                     orderManager.detectIssue();
                     orderManager.suggestAlternative();
                     orderManager.alertChef();
                     break;
-
                 case 11:
                     System.out.print("Enter chef name: ");
                     String chefName = scanner.nextLine();
@@ -121,18 +173,15 @@ public class MainApp {
                     String task = scanner.nextLine();
                     taskScheduler.assignTaskToChef(chefName, task);
                     break;
-
                 case 12:
                     System.out.print("Enter chef name: ");
                     String loginChef = scanner.nextLine();
                     taskScheduler.chefLogin(loginChef);
                     taskScheduler.viewChefTasks(loginChef);
                     break;
-
                 case 13:
                     inventoryManager.monitorStock();
                     break;
-
                 case 14:
                     System.out.print("Enter ingredient name: ");
                     String ingredient = scanner.nextLine();
@@ -141,53 +190,42 @@ public class MainApp {
                     scanner.nextLine(); 
                     inventoryManager.useIngredient(ingredient, quantity);
                     break;
-
                 case 15:
                     inventoryManager.checkForRestocking();
                     break;
-
                 case 16:
                     inventoryManager.fetchSupplierPrices();
                     break;
-
                 case 17:
                     inventoryManager.generatePurchaseOrder();
                     break;
-
                 case 18:
                     billingSystem.completeOrder();
                     break;
-
                 case 19:
                     billingSystem.finalizeOrder();
                     break;
-
                 case 20:
                     billingSystem.generateAndSendInvoice();
                     break;
-
                 case 21:
                     billingSystem.adminLogin();
                     break;
-
                 case 22:
                     billingSystem.requestFinancialData();
                     break;
-
                 case 23:
                     billingSystem.displayFinancialReports();
                     break;
-
                 case 0:
                     System.out.println("Exiting system. Goodbye!");
                     scanner.close();
                     System.exit(0);
-                    break;
-
                 default:
                     System.out.println("Invalid choice. Please try again.");
-                    break;
             }
         }
     }
 }
+
+*/
