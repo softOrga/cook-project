@@ -1,16 +1,15 @@
 package com.MyCooking.steps;
 
+
 import MyCooking.com.OrderCustomizationManager;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
-import static org.junit.Assert.*;
+import io.cucumber.java.en.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class OrderCustomizationSteps {
 
     OrderCustomizationManager customizationManager = new OrderCustomizationManager();
 
-   
     @Given("the customer is creating a new meal request")
     public void startMealRequest() {
         customizationManager.startMealRequest();
@@ -29,16 +28,15 @@ public class OrderCustomizationSteps {
     @Then("the system should validate ingredient compatibility")
     public void validateIngredients() {
         customizationManager.validateIngredients();
-        assertTrue("Ingredients compatibility should be validated.", true);
+        assertTrue(true);
     }
 
     @Then("confirm the custom meal request")
     public void confirmMeal() {
         customizationManager.confirmMeal();
-        assertTrue("Custom meal request should be confirmed.", true);
+        assertTrue(true);
     }
 
-    
     @Given("the customer selects an ingredient that is unavailable or restricted")
     public void selectUnavailableIngredient() {
         customizationManager.selectUnavailableIngredient();
@@ -52,12 +50,12 @@ public class OrderCustomizationSteps {
     @Then("the system should suggest a suitable alternative")
     public void suggestAlternative() {
         customizationManager.suggestAlternative();
-        assertTrue("A suitable alternative should be suggested.", true);
+        assertTrue(true);
     }
 
     @Then("alert the chef for approval")
     public void alertChef() {
         customizationManager.alertChef();
-        assertTrue("Chef should be alerted for approval.", true);
+        assertTrue(true);
     }
 }

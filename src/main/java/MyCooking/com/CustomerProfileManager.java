@@ -1,12 +1,73 @@
 package MyCooking.com;
 
-
 import MyCooking.com.models.Customer;
 import MyCooking.com.models.Order;
 
+import java.util.HashMap;
+import java.util.Map;
+
+public class CustomerProfileManager {
+    private Map<String, Customer> customers = new HashMap<>();
+
+    public void storePreferences(String customerId, String diet, String allergy) {
+        Customer customer = customers.getOrDefault(customerId, new Customer(customerId, "Unknown", "Unknown"));
+        customer.setDietPreference(diet);
+        customer.setAllergy(allergy);
+        customers.put(customerId, customer);
+    }
+
+    public Customer getCustomer(String id) {
+        return customers.get(id);
+    }
+
+    public void displayOrderHistory(String customerId) {
+        Customer customer = customers.get(customerId);
+        if (customer != null) {
+            for (Order order : customer.getOrderHistory()) {
+                order.displayOrderDetails();
+            }
+        } else {
+            System.out.println("No order history found.");
+        }
+    }
+
+    public void suggestPersonalizedMeals(String customerId) {
+        Customer customer = customers.get(customerId);
+        if (customer != null) {
+            System.out.println("Suggested meals for " + customer.getDietPreference() + " and allergy: " + customer.getAllergy());
+        } else {
+            System.out.println("Customer not found.");
+        }
+    }
+
+    public void viewPreferences(String customerId) {
+        Customer customer = customers.get(customerId);
+        if (customer != null) {
+            System.out.println("Dietary Preference: " + customer.getDietPreference());
+            System.out.println("Allergy: " + customer.getAllergy());
+        } else {
+            System.out.println("Customer not found.");
+        }
+    }
+
+    // Utility for test setup
+    public void addTestOrders(String customerId) {
+        Customer customer = customers.get(customerId);
+        if (customer != null) {
+            customer.addOrder(new Order("Vegan Salad", customer.getName(), customer.getPhoneNumber()));
+            customer.addOrder(new Order("Gluten-Free Pasta", customer.getName(), customer.getPhoneNumber()));
+        }
+    }
+}
+
+
+/*package MyCooking.com;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import MyCooking.com.models.Customer;
+import MyCooking.com.models.Order;
 
 public class CustomerProfileManager {
     private Map<String, Customer> customers = new HashMap<>();
@@ -37,7 +98,7 @@ public class CustomerProfileManager {
         Customer customer = customers.get(customerId);
         if (customer != null) {
             System.out.println("Suggested meals for " + customer.getDietPreference() + " and allergy: " + customer.getAllergy());
-            
+            // Logic to suggest meals can be added here
         } else {
             System.out.println("Customer not found.");
         }
@@ -62,7 +123,7 @@ public class CustomerProfileManager {
         }
     }
 }
-
+*/
 
 
 /*

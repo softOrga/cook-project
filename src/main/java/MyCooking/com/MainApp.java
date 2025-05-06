@@ -1,5 +1,171 @@
 package MyCooking.com;
 
+import MyCooking.com.CustomerProfileManager;
+import MyCooking.com.OrderCustomizationManager;
+
+import java.util.Scanner;
+
+public class MainApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CustomerProfileManager profileManager = new CustomerProfileManager();
+        OrderCustomizationManager customizationManager = new OrderCustomizationManager();
+
+        // طلب إدخال الاسم ومعرف العميل (ID)
+        System.out.print("Enter customer name: ");
+        String customerName = scanner.nextLine();
+        System.out.print("Enter customer ID: ");
+        String customerId = scanner.nextLine();
+        
+        boolean running = true;
+
+        System.out.println("=== Welcome to Special Cook Project Management System ===");
+
+        while (running) {
+            System.out.println("\nMain Menu:");
+            System.out.println("1. Manage dietary preferences and allergies");
+            System.out.println("2. View past orders");
+            System.out.println("3. Suggest personalized meal plan");
+            System.out.println("4. Customize meal order");
+            System.out.println("0. Exit");
+
+            System.out.print("Choose an option: ");
+            String input = scanner.nextLine();
+
+            switch (input) {
+                case "1":
+                    System.out.println("\n--- Manage Profile ---");
+                    System.out.println("1. Enter dietary preference and allergy");
+                    System.out.println("2. View preferences and allergies");
+                    System.out.print("Choose an option: ");
+                    String subChoice = scanner.nextLine();
+
+                    if (subChoice.equals("1")) {
+                        System.out.print("Enter dietary preference (e.g., Vegan): ");
+                        String diet = scanner.nextLine();
+                        System.out.print("Enter allergy (e.g., Peanut allergy): ");
+                        String allergy = scanner.nextLine();
+                        profileManager.storePreferences(customerId, diet, allergy);
+                        System.out.println("Preferences saved successfully!");
+                    } else if (subChoice.equals("2")) {
+                        profileManager.viewPreferences(customerId);
+                    } else {
+                        System.out.println("Invalid choice.");
+                    }
+                    break;
+
+                case "2":
+                    System.out.println("\n--- View Past Orders ---");
+                    profileManager.displayOrderHistory(customerId);
+                    break;
+
+                case "3":
+                    System.out.println("\n--- Personalized Meal Plan ---");
+                    profileManager.suggestPersonalizedMeals(customerId);
+                    break;
+
+                case "4":
+                    System.out.println("\n--- Customize Meal Order ---");
+                    customizationManager.customizeMeal(customerId);
+                    break;
+
+                case "0":
+                    running = false;
+                    System.out.println("Exiting application...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+
+/*package MyCooking.com;
+
+import MyCooking.com.CustomerProfileManager;
+import MyCooking.com.OrderCustomizationManager;
+
+import java.util.Scanner;
+
+public class MainApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CustomerProfileManager profileManager = new CustomerProfileManager();
+        OrderCustomizationManager customizationManager = new OrderCustomizationManager();
+
+        String customerId = "customer1";
+        boolean running = true;
+
+        System.out.println("=== Welcome to Special Cook Project Management System ===");
+
+        while (running) {
+            System.out.println("\nMain Menu:");
+            System.out.println("1. Manage dietary preferences and allergies");
+            System.out.println("2. View past orders");
+            System.out.println("3. Suggest personalized meal plan");
+            System.out.println("4. Customize meal order");
+            System.out.println("0. Exit");
+
+            System.out.print("Choose an option: ");
+            String input = scanner.nextLine();
+
+            switch (input) {
+                case "1":
+                    System.out.println("\n--- Manage Profile ---");
+                    System.out.println("1. Enter dietary preference and allergy");
+                    System.out.println("2. View preferences and allergies");
+                    System.out.print("Choose an option: ");
+                    String subChoice = scanner.nextLine();
+
+                    if (subChoice.equals("1")) {
+                        System.out.print("Enter dietary preference (e.g., Vegan): ");
+                        String diet = scanner.nextLine();
+                        System.out.print("Enter allergy (e.g., Peanut allergy): ");
+                        String allergy = scanner.nextLine();
+                        profileManager.storePreferences(customerId, diet, allergy);
+                    } else if (subChoice.equals("2")) {
+                        profileManager.viewPreferences(customerId);
+                    } else {
+                        System.out.println("Invalid choice.");
+                    }
+                    break;
+
+                case "2":
+                    profileManager.displayOrderHistory(customerId);
+                    break;
+
+                case "3":
+                    profileManager.suggestPersonalizedMeals(customerId);
+                    break;
+
+                case "4":
+                   customizationManager.customizeMeal();
+                    break;
+
+                case "0":
+                    running = false;
+                    System.out.println("Exiting application...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+/*
+
+
+/*
+package MyCooking.com;
+
 
 import MyCooking.com.CustomerProfileManager;
 
@@ -61,7 +227,7 @@ public class MainApp {
         scanner.close();
     }
 }
-
+*/
 /*import java.util.Scanner;
 
 public class MainApp {
