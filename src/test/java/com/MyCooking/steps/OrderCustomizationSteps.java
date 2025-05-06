@@ -1,14 +1,14 @@
 package com.MyCooking.steps;
 
-
 import MyCooking.com.OrderCustomizationManager;
+import MyCooking.com.models.CustomerManager;
 import io.cucumber.java.en.*;
 
 import static org.junit.Assert.assertTrue;
 
 public class OrderCustomizationSteps {
 
-    OrderCustomizationManager customizationManager = new OrderCustomizationManager();
+    OrderCustomizationManager customizationManager = new OrderCustomizationManager(new CustomerManager());
 
     @Given("the customer is creating a new meal request")
     public void startMealRequest() {

@@ -1,87 +1,66 @@
-
-
-/*package MyCooking.com;
-
-import MyCooking.com.models.ChefApproval;
-import MyCooking.com.models.CustomMeal;
-import MyCooking.com.models.Ingredient;
-import MyCooking.com.models.IngredientSubstitution;
-import MyCooking.com.models.IngredientValidator;
-import MyCooking.com.models.NotificationService;
+package MyCooking.com;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import MyCooking.com.models.CustomerManager;
 
 public class OrderCustomizationManager {
-    private IngredientValidator validator = new IngredientValidator();
-    private IngredientSubstitution substitution = new IngredientSubstitution();
-    private ChefApproval chefApproval = new ChefApproval();
-    private NotificationService notification = new NotificationService();
+    private List<String> selectedIngredients;
+    private CustomerManager customerManager;
 
-    public void customizeMeal() {
-        Scanner scanner = new Scanner(System.in);
-        CustomMeal meal = new CustomMeal();
-        List<Ingredient> unavailableIngredients = new ArrayList<>();
+    public OrderCustomizationManager(CustomerManager customerManager) {
+        this.customerManager = customerManager;
+        this.selectedIngredients = new ArrayList<>();
+    }
 
-        System.out.println("\n--- Customize Your Meal ---");
-        System.out.println("Started a new custom meal request.");
-        System.out.print("Enter ingredients separated by commas (e.g., Chicken,Tomato,Shrimp): ");
-        String input = scanner.nextLine();
-        String[] items = input.split(",");
+    public void startMealRequest() {
+        System.out.println("Starting a new meal request...");
+        selectedIngredients.clear();  
+    }
 
-        for (String item : items) {
-            String name = item.trim();
-            boolean available = !name.equalsIgnoreCase("Shrimp"); // simulate unavailability
-            boolean restricted = name.equalsIgnoreCase("Peanut");
+    public void selectIngredients(String ing1, String ing2, String ing3) {
+        selectedIngredients.add(ing1);
+        selectedIngredients.add(ing2);
+        selectedIngredients.add(ing3);
+        System.out.println("Ingredients selected: " + ing1 + ", " + ing2 + ", " + ing3);
+    }
 
-            Ingredient ingredient = new Ingredient(name, available, restricted);
-            meal.addIngredient(ingredient);
-            if (!available) {
-                unavailableIngredients.add(ingredient);
-            }
-        }
+    public void saveMeal() {
+        System.out.println("Meal saved with ingredients: " + selectedIngredients);
+    }
 
-        System.out.println("Selected ingredients: ");
-        meal.displayMeal();
+    public void validateIngredients() {
+        System.out.println("Validating ingredients...");
+    }
 
-        boolean valid = validator.validate(meal.getIngredients());
+    public void confirmMeal() {
+        System.out.println("Confirming the custom meal request...");
+    }
 
-        if (!valid) {
-            notification.notifyUser("Meal contains restricted ingredients. Cannot proceed.");
-            return;
-        }
+    public void selectUnavailableIngredient() {
+        System.out.println("Ingredient is unavailable or restricted.");
+    }
 
-        if (!unavailableIngredients.isEmpty()) {
-            notification.notifyUser("Some ingredients are unavailable.");
-            System.out.print("Would you like to see a substitution suggestion? (yes/no): ");
-            String reply = scanner.nextLine().trim().toLowerCase();
-            if (reply.equals("yes")) {
-                List<String> suggestions = substitution.suggestSubstitutions(unavailableIngredients);
-                for (int i = 0; i < unavailableIngredients.size(); i++) {
-                    System.out.println("Alternative for " + unavailableIngredients.get(i).getName() + ": " + suggestions.get(i));
-                }
-            }
-        }
+    public void detectIssue() {
+        System.out.println("Detecting issue with the selected ingredients...");
+    }
 
-        boolean confirm = false;
-        System.out.print("Do you want to confirm this meal? (yes/no): ");
-        String confirmInput = scanner.nextLine().trim().toLowerCase();
-        confirm = confirmInput.equals("yes");
+    public void suggestAlternative() {
+        System.out.println("Suggesting an alternative ingredient...");
+    }
 
-        boolean approved = chefApproval.approveMeal(valid, confirm);
-
-        if (approved) {
-            notification.notifyUser("Custom meal request confirmed successfully!");
-        } else {
-            notification.notifyUser("Meal request not confirmed.");
-        }
+    public void alertChef() {
+        System.out.println("Alerting the chef for ingredient approval...");
     }
 }
 
 
-*/
+ 
 
+
+
+/*
 package MyCooking.com;
 
 import java.util.*;
@@ -177,4 +156,4 @@ public class OrderCustomizationManager {
 	}
 
 
-}
+}*/
