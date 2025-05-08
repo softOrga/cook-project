@@ -1,5 +1,50 @@
 package com.MyCooking.steps;
 
+import io.cucumber.java.en.*;
+import static org.junit.Assert.*;
+
+import MyCooking.com.BillingSystem;
+import MyCooking.com.models.*;
+
+public class BillingSteps {
+
+    private BillingSystem billingManager = new BillingSystem();
+
+    @Given("the customer completes an order")
+    public void completeOrder() {
+        billingManager.completeOrder();
+    }
+
+    @When("the order is finalized")
+    public void finalizeOrder() {
+        billingManager.finalizeOrder();
+    }
+
+    @Then("the system should generate and send an invoice")
+    public void generateInvoice() {
+        billingManager.generateAndSendInvoice("Customer01");
+        assertTrue(!billingManager.getInvoices().isEmpty());
+    }
+
+    @Given("the administrator logs into the system")
+    public void adminLogin() {
+        billingManager.adminLogin();
+    }
+
+    @When("financial data is requested")
+    public void requestFinancialData() {
+        // Nothing extra for now
+    }
+
+    @Then("the system should display up-to-date financial reports")
+    public void displayFinancialReports() {
+        billingManager.displayFinancialReport();
+        assertTrue(true);
+    }
+}
+
+/*package com.MyCooking.steps;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
@@ -42,4 +87,4 @@ public class BillingSteps {
         billingSystem.displayFinancialReports();
         assertTrue(true);
     }
-}
+}*/
