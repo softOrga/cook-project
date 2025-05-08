@@ -19,6 +19,7 @@ public class MainApp {
     );
     private static TaskScheduler scheduler = new TaskScheduler(chefs);
     private static InventoryManager inventoryManager = new InventoryManager();
+    private static BillingSystem BillingSystem = new BillingSystem();
 
     public static void main(String[] args) {
         initializeSubstitutions();
@@ -31,6 +32,8 @@ public class MainApp {
             System.out.println("4. Customize meal order");
             System.out.println("5. Chef Interface (View Assigned Tasks)");
             System.out.println("6. Inventory and Supplier Management");
+            System.out.println("7. Finalize Order & Generate Invoice");
+            System.out.println("8. Admin: View Financial Reports");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
             int option = Integer.parseInt(scanner.nextLine());
@@ -53,6 +56,12 @@ public class MainApp {
                     break;
                 case 6:
                     manageInventoryAndSuppliers();
+                    break;
+                case 7:
+                    finalizeOrderAndGenerateInvoice();
+                    break;
+                case 8:
+                    adminViewFinancialReports();
                     break;
                 case 0:
                     System.exit(0);
@@ -152,7 +161,7 @@ public class MainApp {
 
             Ingredient ing = new Ingredient(ingName, true, false);
             meal.addIngredient(ing);
-            inventoryManager.useIngredient(ingName); // Reduce stock
+            inventoryManager.useIngredient(ingName);
         }
 
         String assignedChefName = scheduler.assignTaskToChefAndReturnName(meal);
@@ -160,6 +169,7 @@ public class MainApp {
             " with ingredients: " + meal.getIngredients() +
             " | Assigned Chef: " + assignedChefName);
 
+        BillingSystem.completeOrder();
         System.out.println("Order saved and assigned to chef.");
     }
 
@@ -225,8 +235,31 @@ public class MainApp {
             }
         }
     }
-}
 
+    private static void finalizeOrderAndGenerateInvoice() {
+        System.out.print("Enter your customer ID: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Customer customer = customers.get(id);
+        if (customer == null) {
+            System.out.println("Customer not found.");
+            return;
+        }
+
+        BillingSystem.finalizeOrder();
+        BillingSystem.generateAndSendInvoice(customer. getCustomerId());
+    }
+
+    private static void adminViewFinancialReports() {
+        System.out.print("Enter admin password to continue: ");
+        String password = scanner.nextLine();
+        if (password.equals("admin123")) {
+        	BillingSystem.adminLogin();
+        	BillingSystem.displayFinancialReport();
+        } else {
+            System.out.println("Access denied.");
+        }
+    }
+}
 
 
 
