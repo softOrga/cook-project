@@ -18,6 +18,7 @@ public class MainApp {
         new Chef("Default Chef", "General")
     );
     private static TaskScheduler scheduler = new TaskScheduler(chefs);
+    private static InventoryManager inventoryManager = new InventoryManager();
 
     public static void main(String[] args) {
         initializeSubstitutions();
@@ -29,6 +30,7 @@ public class MainApp {
             System.out.println("3. Suggest personalized meal plan");
             System.out.println("4. Customize meal order");
             System.out.println("5. Chef Interface (View Assigned Tasks)");
+            System.out.println("6. Inventory and Supplier Management");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
             int option = Integer.parseInt(scanner.nextLine());
@@ -48,6 +50,9 @@ public class MainApp {
                     break;
                 case 5:
                     chefInterface();
+                    break;
+                case 6:
+                    manageInventoryAndSuppliers();
                     break;
                 case 0:
                     System.exit(0);
@@ -147,6 +152,7 @@ public class MainApp {
 
             Ingredient ing = new Ingredient(ingName, true, false);
             meal.addIngredient(ing);
+            inventoryManager.useIngredient(ingName); // Reduce stock
         }
 
         String assignedChefName = scheduler.assignTaskToChefAndReturnName(meal);
@@ -171,7 +177,56 @@ public class MainApp {
             }
         }
     }
+
+    private static void manageInventoryAndSuppliers() {
+        boolean managing = true;
+        while (managing) {
+            System.out.println("\nInventory & Supplier Management Menu:");
+            System.out.println("1. View current stock and low ingredients");
+            System.out.println("2. Suggest restocking");
+            System.out.println("3. Open purchasing interface");
+            System.out.println("4. Fetch real-time prices from suppliers");
+            System.out.println("5. Detect critically low stock");
+            System.out.println("6. Automatically generate purchase orders");
+            System.out.println("7. View all generated purchase orders");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    inventoryManager.viewStock();
+                    break;
+                case "2":
+                    inventoryManager.suggestRestocking();
+                    break;
+                case "3":
+                    inventoryManager.openPurchasingInterface();
+                    break;
+                case "4":
+                    inventoryManager.fetchSupplierPrices();
+                    break;
+                case "5":
+                    inventoryManager.detectCriticalStock();
+                    break;
+                case "6":
+                    inventoryManager.generatePurchaseOrder();
+                    break;
+                case "7":
+                    System.out.println("\n=== Purchase Orders ===");
+                    inventoryManager.viewPurchaseOrders();
+                    break;
+                case "0":
+                    managing = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
 }
+
 
 
 
