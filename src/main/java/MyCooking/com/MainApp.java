@@ -19,6 +19,7 @@ public class MainApp {
     private static TaskScheduler scheduler = new TaskScheduler(chefs);
     private static InventoryManager inventoryManager = new InventoryManager();
     private static BillingSystem billingSystem = new BillingSystem();
+    private static NotificationManager notificationManager = new NotificationManager();
 
     public static void main(String[] args) {
         initializeSubstitutions();
@@ -32,6 +33,7 @@ public class MainApp {
             System.out.println("5. Chef Interface (View Assigned Tasks)");
             System.out.println("6. Inventory and Supplier Management");
             System.out.println("7. Billing and Financial Reports");
+            System.out.println("8. Send delivery reminder to customer");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
             int option = Integer.parseInt(scanner.nextLine());
@@ -58,8 +60,13 @@ public class MainApp {
                 case 7:
                     billingAndReportsMenu();
                     break;
+                case 8:
+                    System.out.print("Enter Customer ID: ");
+                    String custId = scanner.nextLine();
+                    notificationManager.sendDeliveryReminder(custId);
+                    break;
                 case 0:
-                	System.out.println("-----Exit System-----");
+                    System.out.println("-----Exit System-----");
                     System.exit(0);
                     break;
                 default:
@@ -161,6 +168,8 @@ public class MainApp {
         }
 
         String assignedChefName = scheduler.assignTaskToChefAndReturnName(meal);
+        notificationManager.notifyChefTask(assignedChefName, "Prepare " + meal.getMealName());
+
         customer.addToOrderHistory("Ordered: " + meal.getMealName() +
             " with ingredients: " + meal.getIngredients() +
             " | Assigned Chef: " + assignedChefName);
@@ -213,7 +222,10 @@ public class MainApp {
                     inventoryManager.fetchSupplierPrices();
                     break;
                 case "5":
-                    inventoryManager.detectCriticalStock();
+                    List<String> lowStock = inventoryManager.detectCriticalStock();
+                    for (String ingredient : lowStock) {
+                        notificationManager.sendLowStockAlert(ingredient);
+                    }
                     break;
                 case "6":
                     inventoryManager.generatePurchaseOrder();

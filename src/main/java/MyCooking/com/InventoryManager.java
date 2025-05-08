@@ -80,13 +80,16 @@ public class InventoryManager {
         }
     }
 
-    public void detectCriticalStock() {
+    public List<String> detectCriticalStock() {
+        List<String> criticalItems = new ArrayList<>();
         System.out.println("\nDetecting critically low stock...");
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() <= 2) {
                 System.out.println("CRITICAL: " + entry.getKey() + " is almost out of stock!");
+                criticalItems.add(entry.getKey());
             }
         }
+        return criticalItems;
     }
 
     public void generatePurchaseOrder() {

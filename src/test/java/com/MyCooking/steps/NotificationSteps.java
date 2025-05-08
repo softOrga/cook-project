@@ -15,13 +15,13 @@ public class NotificationSteps {
 
     @Given("the customer has a meal scheduled for delivery today")
     public void scheduledMeal() {
-        // Setup context: simulated
+      
         System.out.println("Customer has a meal scheduled for delivery today.");
     }
 
     @When("the time is 1 hour before delivery")
     public void oneHourBeforeDelivery() {
-        // Send reminder now
+        
         notificationManager.sendDeliveryReminder("Customer01");
     }
 
@@ -34,7 +34,7 @@ public class NotificationSteps {
 
     @Given("the stock of an ingredient is low")
     public void lowStockIngredient() {
-        // Simulate triggering low stock
+      
         notificationManager.sendLowStockAlert("onion");
     }
 
