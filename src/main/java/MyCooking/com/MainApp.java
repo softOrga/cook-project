@@ -1,7 +1,6 @@
 package MyCooking.com;
 
 import MyCooking.com.models.*;
-
 import java.util.*;
 
 public class MainApp {
@@ -19,7 +18,7 @@ public class MainApp {
     );
     private static TaskScheduler scheduler = new TaskScheduler(chefs);
     private static InventoryManager inventoryManager = new InventoryManager();
-    private static BillingSystem BillingSystem = new BillingSystem();
+    private static BillingSystem billingSystem = new BillingSystem();
 
     public static void main(String[] args) {
         initializeSubstitutions();
@@ -32,8 +31,7 @@ public class MainApp {
             System.out.println("4. Customize meal order");
             System.out.println("5. Chef Interface (View Assigned Tasks)");
             System.out.println("6. Inventory and Supplier Management");
-            System.out.println("7. Finalize Order & Generate Invoice");
-            System.out.println("8. Admin: View Financial Reports");
+            System.out.println("7. Billing and Financial Reports");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
             int option = Integer.parseInt(scanner.nextLine());
@@ -58,12 +56,10 @@ public class MainApp {
                     manageInventoryAndSuppliers();
                     break;
                 case 7:
-                    finalizeOrderAndGenerateInvoice();
-                    break;
-                case 8:
-                    adminViewFinancialReports();
+                    billingAndReportsMenu();
                     break;
                 case 0:
+                	System.out.println("-----Exit System-----");
                     System.exit(0);
                     break;
                 default:
@@ -169,7 +165,6 @@ public class MainApp {
             " with ingredients: " + meal.getIngredients() +
             " | Assigned Chef: " + assignedChefName);
 
-        BillingSystem.completeOrder();
         System.out.println("Order saved and assigned to chef.");
     }
 
@@ -236,33 +231,50 @@ public class MainApp {
         }
     }
 
-    private static void finalizeOrderAndGenerateInvoice() {
-        System.out.print("Enter your customer ID: ");
-        int id = Integer.parseInt(scanner.nextLine());
-        Customer customer = customers.get(id);
-        if (customer == null) {
-            System.out.println("Customer not found.");
-            return;
-        }
+    private static void billingAndReportsMenu() {
+        boolean managing = true;
+        while (managing) {
+            System.out.println("\n--- Billing & Financial Reports ---");
+            System.out.println("1. Complete order (simulate)");
+            System.out.println("2. Finalize order");
+            System.out.println("3. Generate and send invoice");
+            System.out.println("4. Admin login");
+            System.out.println("5. Request financial report");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
 
-        BillingSystem.finalizeOrder();
-        BillingSystem.generateAndSendInvoice(customer. getCustomerId());
-    }
-
-    private static void adminViewFinancialReports() {
-        System.out.print("Enter admin password to continue: ");
-        String password = scanner.nextLine();
-        if (password.equals("admin123")) {
-        	BillingSystem.adminLogin();
-        	BillingSystem.displayFinancialReport();
-        } else {
-            System.out.println("Access denied.");
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter Customer ID for completing order: ");
+                    String completeId = scanner.nextLine();
+                    billingSystem.completeOrder(completeId);
+                    break;
+                case "2":
+                    billingSystem.finalizeOrder();
+                    break;
+                case "3":
+                    System.out.print("Enter Customer ID for Invoice: ");
+                    String cid = scanner.nextLine();
+                    billingSystem.generateAndSendInvoice(cid);
+                    break;
+                case "4":
+                    System.out.print("Enter admin password: ");
+                    String password = scanner.nextLine();
+                    billingSystem.adminLogin(password);
+                    break;
+                case "5":
+                    billingSystem.displayFinancialReport();
+                    break;
+                case "0":
+                    managing = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
         }
     }
 }
-
-
-
 
 
 /*import java.util.Scanner;

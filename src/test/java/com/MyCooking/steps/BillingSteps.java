@@ -2,33 +2,32 @@ package com.MyCooking.steps;
 
 import io.cucumber.java.en.*;
 import static org.junit.Assert.*;
-
 import MyCooking.com.BillingSystem;
 import MyCooking.com.models.*;
 
 public class BillingSteps {
 
-    private BillingSystem billingManager = new BillingSystem();
+    private BillingSystem  BillingSystem = new BillingSystem();
 
     @Given("the customer completes an order")
     public void completeOrder() {
-        billingManager.completeOrder();
+    	 BillingSystem.completeOrder();
     }
 
     @When("the order is finalized")
     public void finalizeOrder() {
-        billingManager.finalizeOrder();
+    	BillingSystem.finalizeOrder();
     }
 
     @Then("the system should generate and send an invoice")
     public void generateInvoice() {
-        billingManager.generateAndSendInvoice("Customer01");
-        assertTrue(!billingManager.getInvoices().isEmpty());
+    	BillingSystem.generateAndSendInvoice("Customer01");
+        assertTrue(!BillingSystem.getInvoices().isEmpty());
     }
 
     @Given("the administrator logs into the system")
     public void adminLogin() {
-        billingManager.adminLogin();
+    	BillingSystem.adminLogin();
     }
 
     @When("financial data is requested")
@@ -38,7 +37,7 @@ public class BillingSteps {
 
     @Then("the system should display up-to-date financial reports")
     public void displayFinancialReports() {
-        billingManager.displayFinancialReport();
+    	BillingSystem.displayFinancialReport();
         assertTrue(true);
     }
 }
