@@ -86,7 +86,7 @@ public class MainApp {
         System.out.println("\n--- Manage Profile ---");
         System.out.print("Enter your customer ID: ");
         int id = Integer.parseInt(scanner.nextLine());
-        customers.putIfAbsent(id, new Customer(String.valueOf(id), "User" + id, "0000000000"));
+        customers.putIfAbsent(id, new Customer(String.valueOf(id), "User" + id));
         Customer customer = customers.get(id);
 
         System.out.print("Enter dietary preference (e.g., Vegan): ");
@@ -94,7 +94,7 @@ public class MainApp {
         System.out.print("Enter allergy (e.g., Peanut allergy): ");
         String allergy = scanner.nextLine();
 
-        customer.setDietaryPreference(pref);
+        customer.setPreferences(pref);
         customer.setAllergy(allergy);
         System.out.println("Preferences saved successfully!");
     }
@@ -162,15 +162,15 @@ public class MainApp {
                 }
             }
 
-            Ingredient ing = new Ingredient(ingName, true, false);
+            Ingredient ing = new Ingredient(ingName);
             meal.addIngredient(ing);
             inventoryManager.useIngredient(ingName);
         }
 
         String assignedChefName = scheduler.assignTaskToChefAndReturnName(meal);
-        notificationManager.notifyChefTask(assignedChefName, "Prepare " + meal.getMealName());
+        notificationManager.notifyChefTask(assignedChefName, "Prepare " + meal.getName());
 
-        customer.addToOrderHistory("Ordered: " + meal.getMealName() +
+        customer.addOrder("Ordered: " + meal.getName() +
             " with ingredients: " + meal.getIngredients() +
             " | Assigned Chef: " + assignedChefName);
 
@@ -186,7 +186,7 @@ public class MainApp {
                 System.out.println("  No tasks assigned.");
             } else {
                 for (Meal task : tasks) {
-                    System.out.println("  - Meal: " + task.getMealName());
+                    System.out.println("  - Meal: " + task.getName());
                 }
             }
         }

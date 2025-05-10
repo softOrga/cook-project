@@ -11,13 +11,13 @@ public class CustomerProfileManager {
     private Map<String, Customer> customers = new HashMap<>();
 
     public void addCustomer(Customer customer) {
-        customers.put(customer.getCustomerId(), customer);
+        customers.put(customer.getCustomerName(), customer);
     }
 
     public void storePreferences(String customerId, String diet, String allergy) {
         Customer customer = customers.get(customerId);
         if (customer != null) {
-            customer.setDietaryPreference(diet);
+            customer.setPreferences(diet);
             customer.setAllergy(allergy);
         }
     }
