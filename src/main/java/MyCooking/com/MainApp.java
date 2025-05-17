@@ -24,54 +24,31 @@ public class MainApp {
     public static void main(String[] args) {
         initializeSubstitutions();
         while (true) {
-            System.out.println("\n=== Welcome to Special Cook Project Management System ===");
-            System.out.println("Main Menu:");
-            System.out.println("1. Manage dietary preferences and allergies");
-            System.out.println("2. View past orders");
-            System.out.println("3. Suggest personalized meal plan");
-            System.out.println("4. Customize meal order");
-            System.out.println("5. Chef Interface (View Assigned Tasks)");
-            System.out.println("6. Inventory and Supplier Management");
-            System.out.println("7. Billing and Financial Reports");
-            System.out.println("8. Send delivery reminder to customer");
+            System.out.println("\n----- Welcome to Special Cook Project -----");
+            System.out.println("Login as:");
+            System.out.println("1. Customer");
+            System.out.println("2. Chef");
+            System.out.println("3. Manager");
             System.out.println("0. Exit");
-            System.out.print("Choose an option: ");
-            int option = Integer.parseInt(scanner.nextLine());
+            System.out.print("Choose your role: ");
+            String roleChoice = scanner.nextLine().trim();
 
-            switch (option) {
-                case 1:
-                    managePreferences();
+            switch (roleChoice) {
+                case "1":
+                    customerMenu();
                     break;
-                case 2:
-                    viewPastOrders();
+                case "2":
+                    chefMenu();
                     break;
-                case 3:
-                    suggestMealPlan();
+                case "3":
+                    managerMenu();
                     break;
-                case 4:
-                    customizeMeal();
-                    break;
-                case 5:
-                    chefInterface();
-                    break;
-                case 6:
-                    manageInventoryAndSuppliers();
-                    break;
-                case 7:
-                    billingAndReportsMenu();
-                    break;
-                case 8:
-                    System.out.print("Enter Customer ID: ");
-                    String custId = scanner.nextLine();
-                    notificationManager.sendDeliveryReminder(custId);
-                    break;
-                case 0:
-                    System.out.println("-----Exit System-----");
+                case "0":
+                    System.out.println("----- Exit System -----");
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Invalid option.");
-                    break;
+                    System.out.println("Invalid choice. Try again.");
             }
         }
     }
@@ -82,6 +59,84 @@ public class MainApp {
         substitutionMap.put("beef", "tofu");
     }
 
+    // ===== Customer Section =====
+    private static void customerMenu() {
+        System.out.print("\nEnter your Customer ID: ");
+        int customerId = Integer.parseInt(scanner.nextLine());
+        customers.putIfAbsent(customerId, new Customer(String.valueOf(customerId), "User" + customerId));
+
+        boolean loggedIn = true;
+        while (loggedIn) {
+            System.out.println("\n--- Customer Menu ---");
+            System.out.println("1. Manage Profile (Preferences & Allergies)");
+            System.out.println("2. View Past Orders");
+            System.out.println("3. Suggest Personalized Meal Plan");
+            System.out.println("4. Customize Meal Order");
+            System.out.println("5. Request Delivery Reminder");
+            System.out.println("0. Logout");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    managePreferences();
+                    break;
+                case "2":
+                    viewPastOrders();
+                    break;
+                case "3":
+                    suggestMealPlan();
+                    break;
+                case "4":
+                    customizeMeal();
+                    break;
+                case "5":
+                    notificationManager.sendDeliveryReminder(String.valueOf(customerId));
+                    break;
+                case "0":
+                    loggedIn = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    // ===== Chef Section =====
+    private static void chefMenu() {
+        System.out.println("\nLogged in as Chef.");
+        chefInterface();
+        System.out.println("Returning to main menu...");
+    }
+
+    // ===== Manager Section =====
+    private static void managerMenu() {
+        boolean managing = true;
+        while (managing) {
+            System.out.println("\n--- Manager Menu ---");
+            System.out.println("1. Manage Inventory & Suppliers");
+            System.out.println("2. Billing & Financial Reports");
+            System.out.println("0. Logout");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    manageInventoryAndSuppliers();
+                    break;
+                case "2":
+                    billingAndReportsMenu();
+                    break;
+                case "0":
+                    managing = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    // ====== Existing Methods (unchanged) ======
     private static void managePreferences() {
         System.out.println("\n--- Manage Profile ---");
         System.out.print("Enter your customer ID: ");
@@ -203,7 +258,7 @@ public class MainApp {
             System.out.println("5. Detect critically low stock");
             System.out.println("6. Automatically generate purchase orders");
             System.out.println("7. View all generated purchase orders");
-            System.out.println("0. Back to Main Menu");
+            System.out.println("0. Back");
             System.out.print("Enter your choice: ");
 
             String choice = scanner.nextLine().trim();
@@ -252,13 +307,13 @@ public class MainApp {
             System.out.println("3. Generate and send invoice");
             System.out.println("4. Admin login");
             System.out.println("5. Request financial report");
-            System.out.println("0. Back to Main Menu");
+            System.out.println("0. Back");
             System.out.print("Choose an option: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
-                    System.out.print("Enter Customer ID for completing order: ");
+                    System.out.print("Enter Customer ID: ");
                     String completeId = scanner.nextLine();
                     billingSystem.completeOrder(completeId);
                     break;
@@ -266,7 +321,7 @@ public class MainApp {
                     billingSystem.finalizeOrder();
                     break;
                 case "3":
-                    System.out.print("Enter Customer ID for Invoice: ");
+                    System.out.print("Enter Customer ID: ");
                     String cid = scanner.nextLine();
                     billingSystem.generateAndSendInvoice(cid);
                     break;
@@ -287,172 +342,3 @@ public class MainApp {
         }
     }
 }
-
-
-/*import java.util.Scanner;
-
-public class MainApp {
-
-    public static void main(String[] args) {
-
-        CustomerProfileManager customerManager = new CustomerProfileManager();
-        OrderCustomizationManager orderManager = new OrderCustomizationManager();
-        TaskSchedulerManager taskScheduler = new TaskSchedulerManager();
-        InventoryManager inventoryManager = new InventoryManager(); 
-        BillingSystem billingSystem = new BillingSystem(); 
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("**** Welcome to Special Cook Project Management System ****");
-
-        while (true) {
-            System.out.println("\nMain Menu:");
-            System.out.println("1. Store dietary preferences and allergies");
-            System.out.println("2. Add a new order to order history");
-            System.out.println("3. View customer's order history");
-            System.out.println("4. View customer's dietary preferences");
-            System.out.println("5. Suggest personalized meals");
-            System.out.println("6. Start new custom meal request");
-            System.out.println("7. Select ingredients for custom meal");
-            System.out.println("8. Save custom meal and validate ingredients");
-            System.out.println("9. Simulate selecting unavailable ingredient");
-            System.out.println("10. Detect issue and suggest alternative");
-            System.out.println("11. Assign a new task to a chef");
-            System.out.println("12. Chef login and view tasks");
-            System.out.println("13. View current stock levels");     
-            System.out.println("14. Use an ingredient");          
-            System.out.println("15. Check if restocking is needed");  
-            System.out.println("16. Fetch supplier prices");          
-            System.out.println("17. Generate automatic purchase order");
-            System.out.println("18. Complete Order (Billing)");
-            System.out.println("19. Finalize Order (Billing)");
-            System.out.println("20. Generate and Send Invoice");
-            System.out.println("21. Admin Login for Financial Reports");
-            System.out.println("22. Request Financial Data");
-            System.out.println("23. Display Financial Reports");
-            System.out.println("0. Exit");
-
-            System.out.print("\nEnter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter customer ID: ");
-                    String customerId = scanner.nextLine();
-                    System.out.print("Enter dietary preference: ");
-                    String diet = scanner.nextLine();
-                    System.out.print("Enter allergy: ");
-                    String allergy = scanner.nextLine();
-                    customerManager.storePreferences(customerId, diet, allergy);
-                    break;
-                case 2:
-                    System.out.print("Enter customer ID: ");
-                    String customerIdForOrder = scanner.nextLine();
-                    System.out.print("Enter order details: ");
-                    String order = scanner.nextLine();
-                    customerManager.addOrder(customerIdForOrder, order);
-                    break;
-                case 3:
-                    System.out.print("Enter customer ID: ");
-                    String customerIdForHistory = scanner.nextLine();
-                    customerManager.displayOrderHistory(customerIdForHistory);
-                    break;
-                case 4:
-                    System.out.print("Enter customer ID: ");
-                    String customerIdForPrefs = scanner.nextLine();
-                    customerManager.viewPreferences(customerIdForPrefs);
-                    break;
-                case 5:
-                    System.out.print("Enter customer ID: ");
-                    String customerIdForSuggestions = scanner.nextLine();
-                    customerManager.suggestPersonalizedMeals(customerIdForSuggestions);
-                    break;
-                case 6:
-                    orderManager.startMealRequest();
-                    break;
-                case 7:
-                    System.out.print("Enter first ingredient: ");
-                    String ing1 = scanner.nextLine();
-                    System.out.print("Enter second ingredient: ");
-                    String ing2 = scanner.nextLine();
-                    System.out.print("Enter third ingredient: ");
-                    String ing3 = scanner.nextLine();
-                    orderManager.selectIngredients(ing1, ing2, ing3);
-                    break;
-                case 8:
-                    orderManager.saveMeal();
-                    orderManager.validateIngredients();
-                    orderManager.confirmMeal();
-                    break;
-                case 9:
-                    orderManager.selectUnavailableIngredient();
-                    break;
-                case 10:
-                    orderManager.detectIssue();
-                    orderManager.suggestAlternative();
-                    orderManager.alertChef();
-                    break;
-                case 11:
-                    System.out.print("Enter chef name: ");
-                    String chefName = scanner.nextLine();
-                    System.out.print("Enter task description: ");
-                    String task = scanner.nextLine();
-                    taskScheduler.assignTaskToChef(chefName, task);
-                    break;
-                case 12:
-                    System.out.print("Enter chef name: ");
-                    String loginChef = scanner.nextLine();
-                    taskScheduler.chefLogin(loginChef);
-                    taskScheduler.viewChefTasks(loginChef);
-                    break;
-                case 13:
-                    inventoryManager.monitorStock();
-                    break;
-                case 14:
-                    System.out.print("Enter ingredient name: ");
-                    String ingredient = scanner.nextLine();
-                    System.out.print("Enter quantity to use: ");
-                    int quantity = scanner.nextInt();
-                    scanner.nextLine(); 
-                    inventoryManager.useIngredient(ingredient, quantity);
-                    break;
-                case 15:
-                    inventoryManager.checkForRestocking();
-                    break;
-                case 16:
-                    inventoryManager.fetchSupplierPrices();
-                    break;
-                case 17:
-                    inventoryManager.generatePurchaseOrder();
-                    break;
-                case 18:
-                    billingSystem.completeOrder();
-                    break;
-                case 19:
-                    billingSystem.finalizeOrder();
-                    break;
-                case 20:
-                    billingSystem.generateAndSendInvoice();
-                    break;
-                case 21:
-                    billingSystem.adminLogin();
-                    break;
-                case 22:
-                    billingSystem.requestFinancialData();
-                    break;
-                case 23:
-                    billingSystem.displayFinancialReports();
-                    break;
-                case 0:
-                    System.out.println("Exiting system. Goodbye!");
-                    scanner.close();
-                    System.exit(0);
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-}
-
-*/
