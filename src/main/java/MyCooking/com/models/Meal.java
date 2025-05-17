@@ -1,26 +1,24 @@
 package MyCooking.com.models;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Meal {
     private String name;
     private List<Ingredient> ingredients;
+    private int customerId; // ✅ أضفنا هذا
 
-    
-    private String customerId;
+    public Meal(String name) {
+        this.name = name;
+        this.ingredients = new ArrayList<>();
+    }
 
-    public Meal(String name, String customerId) {
+    // ✅ Constructor جديد يشمل customerId
+    public Meal(String name, int customerId) {
         this.name = name;
         this.customerId = customerId;
         this.ingredients = new ArrayList<>();
     }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
 
     public String getName() {
         return name;
@@ -47,12 +45,21 @@ public class Meal {
         return false;
     }
 
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Meal: " + name + "\nIngredients:\n");
         for (Ingredient ingredient : ingredients) {
             sb.append("- ").append(ingredient).append("\n");
         }
+        sb.append("Ordered by Customer ID: ").append(customerId).append("\n");
         return sb.toString();
     }
 }

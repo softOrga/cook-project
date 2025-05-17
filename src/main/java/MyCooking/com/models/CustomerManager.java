@@ -71,6 +71,7 @@ public class CustomerManager {
     public Meal createCustomMeal(Scanner scanner, Customer customer) {
         System.out.print("Enter meal name: ");
         String name = scanner.nextLine();
+        
         List<Ingredient> ingredients = new ArrayList<>();
         while (true) {
             System.out.print("Add ingredient (or type 'done'): ");
@@ -78,6 +79,12 @@ public class CustomerManager {
             if (ingredientName.equalsIgnoreCase("done")) break;
             ingredients.add(new Ingredient(ingredientName));
         }
-        return new Meal(name, name);
+
+        Meal meal = new Meal(name, customer.getId());
+        for (Ingredient ingredient : ingredients) {
+            meal.addIngredient(ingredient);
+        }
+
+        return meal;
     }
 }

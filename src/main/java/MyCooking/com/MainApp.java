@@ -104,10 +104,35 @@ public class MainApp {
 
     // ===== Chef Section =====
     private static void chefMenu() {
-        System.out.println("\nLogged in as Chef.");
-        chefInterface();
-        System.out.println("Returning to main menu...");
+        boolean active = true;
+        while (active) {
+            System.out.println("\n--- Chef Menu ---");
+            System.out.println("1. View Assigned Meals");
+            System.out.println("2. View Customer Preferences");
+            System.out.println("3. View Customer Order History");
+            System.out.println("0. Logout");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    viewAssignedMeals();
+                    break;
+                case "2":
+                    viewCustomerPreferences();
+                    break;
+                case "3":
+                    viewCustomerOrderHistory();
+                    break;
+                case "0":
+                    active = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
     }
+
 
     // ===== Manager Section =====
     private static void managerMenu() {
@@ -135,6 +160,53 @@ public class MainApp {
             }
         }
     }
+    private static void viewAssignedMeals() {
+        for (Chef chef : chefs) {
+            System.out.println("Chef: " + chef.getName() + " [" + chef.getSpecialization() + "]");
+            List<Meal> tasks = chef.getAssignedMeals();
+            if (tasks.isEmpty()) {
+                System.out.println("  No meals assigned.");
+            } else {
+                for (Meal meal : tasks) {
+                    System.out.println("  - Meal: " + meal.getName());
+                    System.out.println("    Ingredients: " + meal.getIngredients());
+                }
+            }
+        }
+    }
+
+    private static void viewCustomerPreferences() {
+        System.out.print("Enter Customer ID to view preferences: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Customer customer = customers.get(id);
+        if (customer != null) {
+            System.out.println("Customer Preferences:");
+            System.out.println("- Dietary Preference: " + customer.getDietaryPreference());
+            System.out.println("- Allergy: " + customer.getAllergy());
+        } else {
+            System.out.println("Customer not found.");
+        }
+    }
+
+    private static void viewCustomerOrderHistory() {
+        System.out.print("Enter Customer ID to view order history: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Customer customer = customers.get(id);
+        if (customer != null) {
+            List<String> orders = customer.getOrderHistory();
+            if (orders.isEmpty()) {
+                System.out.println("No orders found for this customer.");
+            } else {
+                System.out.println("Order History:");
+                for (String order : orders) {
+                    System.out.println("- " + order);
+                }
+            }
+        } else {
+            System.out.println("Customer not found.");
+        }
+    }
+
 
     // ====== Existing Methods (unchanged) ======
     private static void managePreferences() {
@@ -197,7 +269,7 @@ public class MainApp {
             return;
         }
 
-        Meal meal = new Meal("Custom Meal", String.valueOf(id));
+        Meal meal = new Meal("Custom Meal", id);
 
         for (int i = 1; i <= 3; i++) {
             System.out.print("Enter ingredient " + i + ": ");
@@ -245,8 +317,8 @@ public class MainApp {
                     System.out.println("  - Meal: " + task.getName());
 
                     // عرض معلومات العميل
-                    String custId = task.getCustomerId();
-                    Customer customer = customers.get(Integer.parseInt(custId));
+                    int custId = task.getCustomerId();
+                    Customer customer = customers.get(custId);
                     if (customer != null) {
                         System.out.println("    Customer ID: " + custId);
                         System.out.println("    Preference: " + customer.getDietaryPreference());

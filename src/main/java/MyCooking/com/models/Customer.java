@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Customer {
+    private static int idCounter = 1;
+    private int id;
     private String username;
     private String customerName;
     private String allergies;
@@ -11,12 +13,16 @@ public class Customer {
     private List<String> orderHistory; 
 
     public Customer(String username, String customerName) {
+        this.id = idCounter++; // توليد id تلقائي
         this.username = username;
         this.customerName = customerName;
-     
-        
         this.orderHistory = new ArrayList<>();
     }
+
+    public int getId() {
+        return id;
+    }
+
 
     public String getUsername() {
         return username;
