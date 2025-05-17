@@ -197,7 +197,8 @@ public class MainApp {
             return;
         }
 
-        Meal meal = new Meal("Custom Meal");
+        Meal meal = new Meal("Custom Meal", String.valueOf(id));
+
         for (int i = 1; i <= 3; i++) {
             System.out.print("Enter ingredient " + i + ": ");
             String ingName = scanner.nextLine();
@@ -242,10 +243,24 @@ public class MainApp {
             } else {
                 for (Meal task : tasks) {
                     System.out.println("  - Meal: " + task.getName());
+
+                    // عرض معلومات العميل
+                    String custId = task.getCustomerId();
+                    Customer customer = customers.get(Integer.parseInt(custId));
+                    if (customer != null) {
+                        System.out.println("    Customer ID: " + custId);
+                        System.out.println("    Preference: " + customer.getDietaryPreference());
+                        System.out.println("    Allergy: " + customer.getAllergy());
+                    } else {
+                        System.out.println("    Customer information not found.");
+                    }
+
+                    System.out.println("    Ingredients: " + task.getIngredients());
                 }
             }
         }
     }
+
 
     private static void manageInventoryAndSuppliers() {
         boolean managing = true;

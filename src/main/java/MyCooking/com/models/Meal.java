@@ -8,10 +8,19 @@ public class Meal {
     private String name;
     private List<Ingredient> ingredients;
 
-    public Meal(String name) {
+    
+    private String customerId;
+
+    public Meal(String name, String customerId) {
         this.name = name;
+        this.customerId = customerId;
         this.ingredients = new ArrayList<>();
     }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
 
     public String getName() {
         return name;

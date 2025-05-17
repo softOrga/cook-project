@@ -78,6 +78,6 @@ public class CustomerManager {
             if (ingredientName.equalsIgnoreCase("done")) break;
             ingredients.add(new Ingredient(ingredientName));
         }
-        return new Meal(name);
+        return new Meal(name, name);
     }
 }
