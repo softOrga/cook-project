@@ -13,7 +13,7 @@ public class Customer {
     private List<String> orderHistory; 
 
     public Customer(String username, String customerName) {
-        this.id = idCounter++; // توليد id تلقائي
+        this.id = idCounter++;
         this.username = username;
         this.customerName = customerName;
         this.orderHistory = new ArrayList<>();

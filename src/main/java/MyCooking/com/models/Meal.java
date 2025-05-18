@@ -6,14 +6,14 @@ import java.util.List;
 public class Meal {
     private String name;
     private List<Ingredient> ingredients;
-    private int customerId; // ✅ أضفنا هذا
+    private int customerId;
 
     public Meal(String name) {
         this.name = name;
         this.ingredients = new ArrayList<>();
     }
 
-    // ✅ Constructor جديد يشمل customerId
+   
     public Meal(String name, int customerId) {
         this.name = name;
         this.customerId = customerId;
