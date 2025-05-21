@@ -1,22 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+  
   <modelVersion>4.0.0</modelVersion>
   <groupId>cook</groupId>
   <artifactId>MyCooking</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
+  <!-- 🔧 ضع الـ properties هنا -->
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.organization>softorga</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.projectKey>softOrga_cook-project</sonar.projectKey>
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>be.ceau</groupId>
       <artifactId>chart</artifactId>
@@ -47,26 +45,7 @@
       <artifactId>cucumber-picocontainer</artifactId>
       <version>7.22.0</version>
     </dependency>
+
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.9.1.2184</version>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
