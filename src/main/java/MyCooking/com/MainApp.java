@@ -1,5 +1,6 @@
 package MyCooking.com;
 
+
 import MyCooking.com.models.*;
 import java.util.*;
 
@@ -23,7 +24,8 @@ public class MainApp {
 
     public static void main(String[] args) {
         initializeSubstitutions();
-        while (true) {
+        boolean running = true;
+        while (running ) {
             System.out.println("\n----- Welcome to Special Cook Project -----");
             System.out.println("Login as:");
             System.out.println("1. Customer");
@@ -45,7 +47,7 @@ public class MainApp {
                     break;
                 case "0":
                     System.out.println("----- Exit System -----");
-                    System.exit(0);
+                    running = false;
                     break;
                 default:
                     System.out.println("Invalid choice. Try again.");
