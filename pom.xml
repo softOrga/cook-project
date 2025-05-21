@@ -11,10 +11,7 @@
     <version>2.7.0</version>
 </dependency>
 
-    <properties>
-  <sonar.organization>softorga</sonar.organization>
-  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-</properties>
+  
 
   
   <dependency>
@@ -45,5 +42,11 @@
   
   
   </dependencies>
+  
+    <properties>
+  <sonar.organization>softorga</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
+  
   
 </project>
