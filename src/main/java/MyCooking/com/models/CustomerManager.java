@@ -59,7 +59,7 @@ public class CustomerManager {
     private List<String> parseList(String input) {
         String[] parts = input.split(",");
         if (parts.length == 1 && parts[0].isEmpty()) {
-            return new ArrayList<>(); // إذا كانت المدخلات فارغة
+            return new ArrayList<>(); 
         }
         return new ArrayList<>(Arrays.asList(parts));
     }
