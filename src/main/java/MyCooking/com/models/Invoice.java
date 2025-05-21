@@ -40,4 +40,3 @@ public class Invoice {
                " | Date: " + date;
     }
 }
-
