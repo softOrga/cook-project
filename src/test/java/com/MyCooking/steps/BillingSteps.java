@@ -30,10 +30,17 @@ public class BillingSteps {
         billingSystem.adminLogin("admin01"); 
     }
 
-
+    /*@When("financial data is requested")
+    public void requestFinancialData() {
+        // TODO: This step is intentionally left unimplemented.
+        // The system generates financial data automatically during report display.
+        // Implement this method if explicit financial data retrieval becomes necessary.
+        throw new UnsupportedOperationException("Financial data request is not implemented yet.");
+    }*/
+    
     @When("financial data is requested")
     public void requestFinancialData() {
-        
+        billingSystem.requestFinancialData();
     }
 
     @Then("the system should display up-to-date financial reports")
@@ -41,7 +48,12 @@ public class BillingSteps {
         billingSystem.displayFinancialReport();
         assertTrue(true);
     }
+    
+   
+
 }
+
+
 
 
 

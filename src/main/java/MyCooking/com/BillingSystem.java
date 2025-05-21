@@ -19,6 +19,17 @@ public class BillingSystem {
         System.out.println("Order has been finalized.");
         System.out.println("Total order: $" + total);
     }
+    public void requestFinancialData() {
+        if (!adminLoggedIn) {
+            System.out.println("Access denied. Admin login required.");
+            return;
+        }
+
+        System.out.println("Fetching up-to-date financial data...");
+        double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
+        System.out.println("Current Total Revenue: $" + total);
+    }
+
 
     public void generateAndSendInvoice(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0); 
