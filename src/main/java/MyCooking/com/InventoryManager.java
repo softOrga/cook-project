@@ -9,6 +9,14 @@ public class InventoryManager {
     private final SupplierService supplierService = new SupplierService();
     private final List<String> purchaseOrders = new ArrayList<>();
 
+    // Constants to avoid duplicated strings
+    private static final String PRICE_LABEL = " | Price: $";
+    private static final String DELIVERY_LABEL = " | Delivery in: ";
+    private static final String ETA_LABEL = " | ETA: ";
+    private static final String FROM_LABEL = " | From: ";
+    private static final String SUPPLIER_LABEL = " | Supplier: ";
+    private static final String DAYS_LABEL = " days";
+
     public InventoryManager() {
         stock.put("tomato", 5);
         stock.put("onion", 4);
@@ -55,8 +63,8 @@ public class InventoryManager {
                 String ingredient = entry.getKey();
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 System.out.println("- " + ingredient + " is low. Best supplier: " + supplier.getName() +
-                        " | Price: $" + supplier.getPrice() +
-                        " | Delivery in: " + supplier.getDeliveryDays() + " days");
+                        PRICE_LABEL + supplier.getPrice() +
+                        DELIVERY_LABEL + supplier.getDeliveryDays() + DAYS_LABEL);
             }
         }
     }
@@ -66,9 +74,9 @@ public class InventoryManager {
         for (String ingredient : stock.keySet()) {
             Supplier supplier = supplierService.getBestSupplier(ingredient);
             System.out.println("Ingredient: " + ingredient +
-                    " | Price: $" + supplier.getPrice() +
-                    " | Supplier: " + supplier.getName() +
-                    " | Delivery in: " + supplier.getDeliveryDays() + " days");
+                    PRICE_LABEL + supplier.getPrice() +
+                    SUPPLIER_LABEL + supplier.getName() +
+                    DELIVERY_LABEL + supplier.getDeliveryDays() + DAYS_LABEL);
         }
     }
 
@@ -99,9 +107,9 @@ public class InventoryManager {
                 String ingredient = entry.getKey();
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 String order = "Order: " + ingredient +
-                        " | From: " + supplier.getName() +
-                        " | Price: $" + supplier.getPrice() +
-                        " | ETA: " + supplier.getDeliveryDays() + " days";
+                        FROM_LABEL + supplier.getName() +
+                        PRICE_LABEL + supplier.getPrice() +
+                        ETA_LABEL + supplier.getDeliveryDays() + DAYS_LABEL;
                 purchaseOrders.add(order);
                 System.out.println(order);
             }
@@ -132,5 +140,3 @@ public class InventoryManager {
         }
     }
 }
-
-
