@@ -54,13 +54,13 @@ public class CustomerProfileManagerTest {
 
     @Test
     public void testDisplayOrderHistory() {
-        // just call to check no exceptions (prints output)
+        
         manager.displayOrderHistory("John Doe");
     }
 
     @Test
     public void testSuggestPersonalizedMeals() {
-        // just call to check no exceptions (prints output)
+       
         manager.suggestPersonalizedMeals("John Doe");
     }
 }

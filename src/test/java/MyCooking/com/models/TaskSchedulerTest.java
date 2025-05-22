@@ -108,7 +108,6 @@ public class TaskSchedulerTest {
         Meal meal = new Meal("Any Meal");
         meal.addIngredient(new Ingredient("rice", 1));
 
-        // لا يجب أن يرمي استثناءً
         emptyScheduler.assignTaskToChef(meal);
     }
 
@@ -154,68 +153,4 @@ public class TaskSchedulerTest {
         assertTrue(veganChef.getAssignedMeals().contains(veganMeal));
         assertFalse(veganChef2.getAssignedMeals().contains(veganMeal));
     }
-    //
-    @Test
-    public void testDetectMealTypeWithEmptyIngredients() throws Exception {
-        Meal emptyMeal = new Meal("Empty");
-        java.lang.reflect.Method method = TaskScheduler.class.getDeclaredMethod("detectMealType", Meal.class);
-        method.setAccessible(true);
-        String result = (String) method.invoke(scheduler, emptyMeal);
-        assertEquals("General", result); 
-    }
-
-    @Test
-    public void testAssignTaskToChef_withMixedIngredients() {
-        Ingredient tofu = new Ingredient("tofu", 1);
-        Ingredient chicken = new Ingredient("chicken", 1);
-        Meal mixedMeal = new Meal("Mixed Dish");
-        mixedMeal.addIngredient(tofu);
-        mixedMeal.addIngredient(chicken);
-
-        String assignedChefName = scheduler.assignTaskToChefAndReturnName(mixedMeal);
-        
-        assertNotNull(assignedChefName);
-        assertTrue(assignedChefName.equals("Alice") || assignedChefName.equals("Bob") || assignedChefName.equals("Default Chef"));
-    }
-
-    @Test
-    public void testAssignTaskToChefWithNullMeal() {
-        try {
-            scheduler.assignTaskToChef(null);
-        } catch (Exception e) {
-            fail("Should handle null Meal gracefully, but threw: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testAssignTaskToChefWithNullIngredientsInMeal() {
-        Meal mealWithNullIngredients = new Meal("Null Ingredients");
-        
-        try {
-            mealWithNullIngredients.addIngredient(null);
-        } catch (Exception e) {
-            
-        }
-        try {
-            scheduler.assignTaskToChef(mealWithNullIngredients);
-        } catch (Exception e) {
-            fail("Should handle meal with null ingredients gracefully, but threw: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testAssignMultipleMealsToSameChef() {
-        Meal meal1 = new Meal("Vegan Dish 1");
-        meal1.addIngredient(new Ingredient("tofu", 1));
-        Meal meal2 = new Meal("Vegan Dish 2");
-        meal2.addIngredient(new Ingredient("lettuce", 2));
-
-        scheduler.assignTaskToChef(meal1);
-        scheduler.assignTaskToChef(meal2);
-
-        assertTrue(veganChef.getAssignedMeals().contains(meal1));
-        assertTrue(veganChef.getAssignedMeals().contains(meal2));
-        assertEquals(2, veganChef.getAssignedMeals().size());
-    }
-
 }

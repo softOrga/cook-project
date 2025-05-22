@@ -17,7 +17,7 @@ public class UserTest {
     public void testConstructorAndGetters() {
         assertEquals("testUser", user.getUsername());
         assertEquals("secret123", user.getPassword());
-        assertEquals("ADMIN", user.getRole());  // لاحظ أنه يتم تحويل role إلى uppercase
+        assertEquals("ADMIN", user.getRole());  
     }
 
     @Test

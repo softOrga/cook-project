@@ -56,7 +56,7 @@ public class NotificationManagerTest {
         notificationManager.sendDeliveryReminder("cust2");
         List<String> notes = notificationManager.getNotifications();
         String message = notes.get(notes.size() - 1);
-        // Message must start with timestamp in brackets
+        
         assertTrue(message.startsWith("["));
         assertTrue(message.contains("] Reminder: Dear customer cust2"));
     }
