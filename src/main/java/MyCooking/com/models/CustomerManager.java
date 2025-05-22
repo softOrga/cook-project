@@ -87,7 +87,7 @@ public class CustomerManager {
                 continue;
             }
             if (ingredientName.equalsIgnoreCase("done")) break;
-            ingredients.add(new Ingredient(ingredientName.trim()));
+            ingredients.add(new Ingredient(ingredientName.trim(), 0));
         }
 
         Meal meal = new Meal(name, customer.getId());

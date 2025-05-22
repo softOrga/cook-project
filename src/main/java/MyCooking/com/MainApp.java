@@ -292,7 +292,7 @@ public class MainApp {
                 }
             }
 
-            Ingredient ing = new Ingredient(ingName);
+            Ingredient ing = new Ingredient(ingName, i);
             meal.addIngredient(ing);
             inventoryManager.useIngredient(ingName);
         }
