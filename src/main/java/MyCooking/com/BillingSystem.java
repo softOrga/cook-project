@@ -1,4 +1,5 @@
 package MyCooking.com;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -124,26 +125,5 @@ public class BillingSystem {
         adminLoggedIn = false;
         logger.info("Admin logged out.");
     }
-
-    public static void main(String[] args) {
-        BillingSystem billing = new BillingSystem();
-
-        billing.completeOrder("C001", 150.0);
-        billing.completeOrder("C002");
-
-        billing.generateAndSendInvoice("C003", 200.0);
-        billing.generateAndSendInvoice("C004");
-
-        billing.finalizeOrder();
-
-        billing.adminLogin(null);
-        billing.adminLogin("wrong_password");
-        billing.adminLogin(billing.adminPassword); // correct password from loaded file (may be "")
-
-        billing.displayFinancialReport();
-
-        billing.adminLogout();
-
-        billing.clearInvoices();
-    }
 }
+
