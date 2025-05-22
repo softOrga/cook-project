@@ -1,51 +1,68 @@
 package MyCooking.com.models;
 
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Test;
+
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 public class TaskSchedulerTest {
 
+    private Chef veganChef;
+    private Chef grillChef;
+    private Chef defaultChef;
+    private TaskScheduler scheduler;
+
+    @Before
+    public void setup() {
+        veganChef = new Chef("Alice", "Vegan");
+        grillChef = new Chef("Bob", "Grill");
+        defaultChef = new Chef("Default Chef", "General");
+        scheduler = new TaskScheduler(Arrays.asList(veganChef, grillChef, defaultChef));
+    }
+
     @Test
-    public void testAssignTaskToChef() {
-        
-        Ingredient tofu = new Ingredient("tofu", 2);
-        Ingredient lettuce = new Ingredient("lettuce", 1);
-        Ingredient chicken = new Ingredient("chicken breast", 1);
-        Ingredient rice = new Ingredient("rice", 1);
-        Ingredient salt = new Ingredient("salt", 1);
+    public void testAssignToVeganChef() {
+        Meal meal = new Meal("Salad", Arrays.asList(
+            new Ingredient("Carrot"),
+            new Ingredient("Lettuce")
+        ));
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Alice", assignedChef);
+        assertTrue(veganChef.getAssignedMeals().contains(meal));
+    }
 
-        
-        Meal veganMeal = new Meal("Vegan Salad");
-        veganMeal.addIngredient(tofu);
-        veganMeal.addIngredient(lettuce);
+    @Test
+    public void testAssignToGrillChef() {
+        Meal meal = new Meal("BBQ Chicken", Arrays.asList(
+            new Ingredient("Chicken"),
+            new Ingredient("Spices")
+        ));
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Bob", assignedChef);
+        assertTrue(grillChef.getAssignedMeals().contains(meal));
+    }
 
-        Meal grillMeal = new Meal("Grilled Chicken");
-        grillMeal.addIngredient(chicken);
-        grillMeal.addIngredient(rice);
+    @Test
+    public void testAssignToDefaultChefWhenNoSpecialization() {
+        Meal meal = new Meal("Pasta", Arrays.asList(
+            new Ingredient("Pasta"),
+            new Ingredient("Tomato Sauce")
+        ));
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Default Chef", assignedChef);
+        assertTrue(defaultChef.getAssignedMeals().contains(meal));
+    }
 
-        Meal generalMeal = new Meal("Rice and Salt");
-        generalMeal.addIngredient(rice);
-        generalMeal.addIngredient(salt);
-
-        
-        Chef veganChef = new Chef("Alice", "Vegan");
-        Chef grillChef = new Chef("Bob", "Grill");
-        Chef defaultChef = new Chef("Default Chef", "General");
-
-        
-        List<Chef> chefs = Arrays.asList(veganChef, grillChef, defaultChef);
-        TaskScheduler scheduler = new TaskScheduler(chefs);
-
-        
-        String assignedVeganChef = scheduler.assignTaskToChefAndReturnName(veganMeal);
-        assertEquals("Alice", assignedVeganChef);
-
-        String assignedGrillChef = scheduler.assignTaskToChefAndReturnName(grillMeal);
-        assertEquals("Bob", assignedGrillChef);
-
-        String assignedDefaultChef = scheduler.assignTaskToChefAndReturnName(generalMeal);
-        assertEquals("Default Chef", assignedDefaultChef);
+    @Test
+    public void testAssignReturnsUnknownWhenNoDefaultChef() {
+        TaskScheduler schedulerWithoutDefault = new TaskScheduler(Arrays.asList(veganChef, grillChef));
+        Meal meal = new Meal("Pasta", Arrays.asList(
+            new Ingredient("Pasta"),
+            new Ingredient("Tomato Sauce")
+        ));
+        String assignedChef = schedulerWithoutDefault.assignTaskToChefAndReturnName(meal);
+        assertEquals("Unknown", assignedChef);
     }
 }
