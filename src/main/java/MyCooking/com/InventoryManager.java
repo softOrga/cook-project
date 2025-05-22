@@ -139,4 +139,15 @@ public class InventoryManager {
             System.out.println("Warning: Ingredient '" + ingredient + "' not found in inventory!");
         }
     }
+
+    public void restockIngredient(String ingredient, int amount) {
+        int current = stock.getOrDefault(ingredient, 0);
+        stock.put(ingredient, current + amount);
+        System.out.println("Restocked " + ingredient + " by " + amount + ". New total: " + (current + amount));
+    }
+
+    public int getStock(String ingredient) {
+        return stock.getOrDefault(ingredient, 0);
+    }
 }
+
