@@ -5,12 +5,11 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import MyCooking.com.models.Invoice;
 
 public class BillingSystem {
     private static final Logger logger = Logger.getLogger(BillingSystem.class.getName());
-    private List<Invoice> invoices = new ArrayList<>();
+    private final List<Invoice> invoices = new ArrayList<>();
     private boolean adminLoggedIn = false;
     private String adminPassword = "";
 
@@ -41,24 +40,40 @@ public class BillingSystem {
     }
 
     public void completeOrder(String customerId) {
+        if (customerId == null || customerId.isEmpty()) {
+            logger.warning("Invalid customer ID provided.");
+            return;
+        }
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
         logger.log(Level.INFO, "Order completed for customer: {0}", customerId);
     }
 
     public void finalizeOrder() {
+        if (invoices.isEmpty()) {
+            logger.info("No invoices to finalize.");
+            return;
+        }
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
         logger.log(Level.INFO, "Order has been finalized.");
         logger.log(Level.INFO, "Total order: ${0}", total);
     }
 
     public void generateAndSendInvoice(String customerId) {
+        if (customerId == null || customerId.isEmpty()) {
+            logger.warning("Invalid customer ID provided.");
+            return;
+        }
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
         logger.log(Level.INFO, "Invoice generated and sent to customer: {0}", customerId);
     }
 
     public void adminLogin(String password) {
+        if (password == null) {
+            logger.warning("Password is null.");
+            return;
+        }
         if (password.equals(adminPassword)) {
             adminLoggedIn = true;
             logger.log(Level.INFO, "Admin logged in successfully.");
@@ -72,6 +87,10 @@ public class BillingSystem {
             logger.log(Level.WARNING, "Access denied. Admin login required.");
             return;
         }
+        if (invoices.isEmpty()) {
+            logger.info("No financial data to report.");
+            return;
+        }
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
         logger.log(Level.INFO, "--- Financial Report ---");
         logger.log(Level.INFO, "Total invoices: {0}", invoices.size());
@@ -79,6 +98,6 @@ public class BillingSystem {
     }
 
     public List<Invoice> getInvoices() {
-        return invoices;
+        return new ArrayList<>(invoices);
     }
 }

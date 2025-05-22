@@ -9,7 +9,6 @@ public class InventoryManager {
     private final SupplierService supplierService = new SupplierService();
     private final List<String> purchaseOrders = new ArrayList<>();
 
-    // Constants to avoid duplicated strings
     private static final String PRICE_LABEL = " | Price: $";
     private static final String DELIVERY_LABEL = " | Delivery in: ";
     private static final String ETA_LABEL = " | ETA: ";
@@ -49,15 +48,21 @@ public class InventoryManager {
 
     public void checkLowStockAndSuggestRestock() {
         System.out.println("\nChecking for low stock...");
+        boolean found = false;
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() < 3) {
                 System.out.println("Restock suggested for: " + entry.getKey());
+                found = true;
             }
+        }
+        if (!found) {
+            System.out.println("All items are sufficiently stocked.");
         }
     }
 
     public void suggestRestocking() {
         System.out.println("\nSuggested restocks:");
+        boolean found = false;
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() < 3) {
                 String ingredient = entry.getKey();
@@ -65,7 +70,11 @@ public class InventoryManager {
                 System.out.println("- " + ingredient + " is low. Best supplier: " + supplier.getName() +
                         PRICE_LABEL + supplier.getPrice() +
                         DELIVERY_LABEL + supplier.getDeliveryDays() + DAYS_LABEL);
+                found = true;
             }
+        }
+        if (!found) {
+            System.out.println("No restocks needed at this time.");
         }
     }
 
@@ -97,6 +106,9 @@ public class InventoryManager {
                 criticalItems.add(entry.getKey());
             }
         }
+        if (criticalItems.isEmpty()) {
+            System.out.println("No critical items found.");
+        }
         return criticalItems;
     }
 
@@ -113,6 +125,9 @@ public class InventoryManager {
                 purchaseOrders.add(order);
                 System.out.println(order);
             }
+        }
+        if (purchaseOrders.isEmpty()) {
+            System.out.println("No purchase orders needed.");
         }
     }
 
@@ -139,15 +154,6 @@ public class InventoryManager {
             System.out.println("Warning: Ingredient '" + ingredient + "' not found in inventory!");
         }
     }
-
-    public void restockIngredient(String ingredient, int amount) {
-        int current = stock.getOrDefault(ingredient, 0);
-        stock.put(ingredient, current + amount);
-        System.out.println("Restocked " + ingredient + " by " + amount + ". New total: " + (current + amount));
-    }
-
-    public int getStock(String ingredient) {
-        return stock.getOrDefault(ingredient, 0);
-    }
 }
+
 
