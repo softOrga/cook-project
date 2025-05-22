@@ -181,5 +181,50 @@ public class BillingSystemTest {
         assertTrue(billingSystem.adminLogin("admin123")); 
         assertTrue(billingSystem.isAdminLoggedIn());
     }
+    
+    @Test
+    public void testAdminLoginWithNullPassword() {
+        assertFalse(billingSystem.adminLogin(null));
+        assertFalse(billingSystem.isAdminLoggedIn());
+    }
+
+    @Test
+    public void testCompleteOrderWithZeroAndNegativeAmounts() {
+        assertTrue(billingSystem.completeOrder("custZero", 0.0));
+        assertTrue(billingSystem.completeOrder("custNegative", -50.0)); // if allowed
+        List<Invoice> invoices = billingSystem.getInvoices();
+        assertTrue(invoices.stream().anyMatch(i -> i.getAmount() == 0.0));
+        assertTrue(invoices.stream().anyMatch(i -> i.getAmount() == -50.0));
+    }
+
+    @Test
+    public void testGenerateAndSendInvoiceWithZeroAndNegativeAmounts() {
+        assertTrue(billingSystem.generateAndSendInvoice("custZero", 0.0));
+        assertTrue(billingSystem.generateAndSendInvoice("custNegative", -10.0));
+    }
+
+    @Test
+    public void testFinalizeOrderWithInvoicesAssertions() {
+        billingSystem.completeOrder("custFinal", 123.45);
+        billingSystem.finalizeOrder();
+        // Since finalizeOrder() only logs, consider using a log-capturing tool (e.g. LogCaptor)
+        // For now just ensure invoices list is not empty
+        assertFalse(billingSystem.getInvoices().isEmpty());
+    }
+
+    @Test
+    public void testClearInvoicesThenCheckEmpty() {
+        billingSystem.completeOrder("custClear", 100.0);
+        billingSystem.clearInvoices();
+        assertEquals(0, billingSystem.getInvoices().size());
+    }
+
+    @Test
+    public void testAdminLogoutAfterLogin() {
+        billingSystem.adminLogin("admin123");
+        billingSystem.adminLogout();
+        assertFalse(billingSystem.isAdminLoggedIn());
+    }
+
 
 }

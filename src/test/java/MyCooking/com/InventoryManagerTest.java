@@ -142,4 +142,45 @@ public class InventoryManagerTest {
       
         inventory.viewStock();
     }
+    
+    @Test
+    public void testUseIngredientUntilEmptyAndBeyond() {
+        String ingredient = "milk"; // initial 2 units
+
+        // Use twice, should succeed
+        assertTrue(inventory.useIngredient(ingredient));
+        assertTrue(inventory.useIngredient(ingredient));
+        // Now zero units left, next use should fail
+        assertFalse(inventory.useIngredient(ingredient));
+    }
+
+    @Test
+    public void testDetectCriticalStockWhenEmpty() {
+        // Empty all stock
+        inventory.stock.clear();
+        List<String> critical = inventory.detectCriticalStock();
+        assertTrue(critical.isEmpty());
+    }
+
+    @Test
+    public void testCheckLowStockAndSuggestRestockWhenEmpty() {
+        inventory.stock.clear();
+        List<String> lowStock = inventory.checkLowStockAndSuggestRestock();
+        assertTrue(lowStock.isEmpty());
+    }
+
+    @Test
+    public void testSuggestRestockingWhenEmpty() {
+        inventory.stock.clear();
+        List<String> suggested = inventory.suggestRestocking();
+        assertTrue(suggested.isEmpty());
+    }
+
+    @Test
+    public void testGeneratePurchaseOrderWhenEmpty() {
+        inventory.stock.clear();
+        List<String> orders = inventory.generatePurchaseOrder();
+        assertTrue(orders.isEmpty());
+    }
+
 }
