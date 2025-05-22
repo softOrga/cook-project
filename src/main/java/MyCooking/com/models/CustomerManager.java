@@ -24,7 +24,12 @@ public class CustomerManager {
             String name = reader.readLine();
             String allergies = reader.readLine();
             String preferences = reader.readLine();
-            return new Customer(username, name);
+
+            Customer customer = new Customer(username, name);
+            customer.setAllergy(allergies != null ? allergies : "");
+            customer.setPreferences(preferences != null ? preferences : "");
+
+            return customer;
         } catch (IOException e) {
             System.out.println("Failed to load profile for " + username + ". Creating a new one.");
             return new Customer(username, "");
@@ -36,32 +41,27 @@ public class CustomerManager {
         String name = scanner.nextLine();
 
         System.out.print("Enter your allergies (comma-separated): ");
-        List<String> allergies = parseList(scanner.nextLine());
+        String allergies = scanner.nextLine();
 
         System.out.print("Enter your dietary preferences (comma-separated): ");
-        List<String> preferences = parseList(scanner.nextLine());
+        String preferences = scanner.nextLine();
 
         Customer customer = new Customer(username, name);
+        customer.setAllergy(allergies);
+        customer.setPreferences(preferences);
+
         saveProfile(profileFile, customer);
         return customer;
     }
 
     private void saveProfile(File profileFile, Customer customer) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(profileFile))) {
-            writer.println(customer.getUsername());
-            writer.println(String.join(",", customer.getAllergy()));
-            writer.println(String.join(",", customer.getDietaryPreference()));
+            writer.println(customer.getCustomerName());
+            writer.println(customer.getAllergy());
+            writer.println(customer.getDietaryPreference());
         } catch (IOException e) {
             System.out.println("Error saving profile for " + customer.getUsername());
         }
-    }
-
-    private List<String> parseList(String input) {
-        String[] parts = input.split(",");
-        if (parts.length == 1 && parts[0].isEmpty()) {
-            return new ArrayList<>(); 
-        }
-        return new ArrayList<>(Arrays.asList(parts));
     }
 
     public void collectCustomerPreferences(Scanner scanner, Customer customer) {
@@ -71,7 +71,7 @@ public class CustomerManager {
     public Meal createCustomMeal(Scanner scanner, Customer customer) {
         System.out.print("Enter meal name: ");
         String name = scanner.nextLine();
-        
+
         List<Ingredient> ingredients = new ArrayList<>();
         while (true) {
             System.out.print("Add ingredient (or type 'done'): ");
@@ -88,3 +88,4 @@ public class CustomerManager {
         return meal;
     }
 }
+

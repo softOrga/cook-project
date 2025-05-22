@@ -2,10 +2,13 @@ package MyCooking.com;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import MyCooking.com.models.CustomerManager;
 
 public class OrderCustomizationManager {
+    private static final Logger logger = Logger.getLogger(OrderCustomizationManager.class.getName());
+
     private List<String> selectedIngredients;
     private CustomerManager customerManager;
 
@@ -15,45 +18,42 @@ public class OrderCustomizationManager {
     }
 
     public void startMealRequest() {
-        System.out.println("Starting a new meal request...");
-        selectedIngredients.clear();  
+        logger.info("Starting a new meal request...");
+        selectedIngredients.clear();
     }
 
     public void selectIngredients(String ing1, String ing2, String ing3) {
         selectedIngredients.add(ing1);
         selectedIngredients.add(ing2);
         selectedIngredients.add(ing3);
-        System.out.println("Ingredients selected: " + ing1 + ", " + ing2 + ", " + ing3);
+        logger.log(java.util.logging.Level.INFO, "Ingredients selected: {0}, {1}, {2}", new Object[]{ing1, ing2, ing3});
     }
 
     public void saveMeal() {
-        System.out.println("Meal saved with ingredients: " + selectedIngredients);
+        logger.info("Meal saved with ingredients: " + selectedIngredients);
     }
 
     public void validateIngredients() {
-        System.out.println("Validating ingredients...");
+        logger.info("Validating ingredients...");
     }
 
     public void confirmMeal() {
-        System.out.println("Confirming the custom meal request...");
+        logger.info("Confirming the custom meal request...");
     }
 
     public void selectUnavailableIngredient() {
-        System.out.println("Ingredient is unavailable or restricted.");
+        logger.info("Ingredient is unavailable or restricted.");
     }
 
     public void detectIssue() {
-        System.out.println("Detecting issue with the selected ingredients...");
+        logger.info("Detecting issue with the selected ingredients...");
     }
 
     public void suggestAlternative() {
-        System.out.println("Suggesting an alternative ingredient...");
+        logger.info("Suggesting an alternative ingredient...");
     }
 
     public void alertChef() {
-        System.out.println("Alerting the chef for ingredient approval...");
+        logger.info("Alerting the chef for ingredient approval...");
     }
 }
-
-
- 
