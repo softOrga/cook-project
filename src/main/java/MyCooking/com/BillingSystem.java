@@ -24,6 +24,7 @@ public class BillingSystem {
         } else {
             loadAdminPassword();
         }
+        
     }
 
     protected void loadAdminPassword() {
