@@ -11,7 +11,7 @@ public class BillingSystem {
     private static final Logger logger = Logger.getLogger(BillingSystem.class.getName());
     private final List<Invoice> invoices = new ArrayList<>();
     private boolean adminLoggedIn = false;
-    private String adminPassword = "";
+    String adminPassword = "";
 
     public BillingSystem() {
         loadAdminPassword();
