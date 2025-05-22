@@ -154,6 +154,14 @@ public class InventoryManager {
             System.out.println("Warning: Ingredient '" + ingredient + "' not found in inventory!");
         }
     }
+    void testCheckStock_SufficientStock() {
+        InventoryManager im = new InventoryManager();
+        im.checkStock("tomato");}
+    void testCheckStock_LowStock() {
+        InventoryManager im = new InventoryManager();
+        im.useIngredient("cheese");
+        im.checkStock("cheese");}
+   
 }
 
 
