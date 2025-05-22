@@ -125,5 +125,26 @@ public class BillingSystem {
         adminLoggedIn = false;
         logger.info("Admin logged out.");
     }
+    public static void main(String[] args) {
+        BillingSystem billing = new BillingSystem();
+
+        billing.completeOrder("C001", 150.0);
+        billing.completeOrder("C002");
+        billing.generateAndSendInvoice("C003", 200.0);
+        billing.generateAndSendInvoice("C004");
+
+        billing.finalizeOrder();
+
+        billing.adminLogin("wrong");
+
+        billing.adminLogin("admin123");
+
+        billing.displayFinancialReport();
+
+        billing.adminLogout();
+
+        billing.clearInvoices();
+    }
+
 }
 
