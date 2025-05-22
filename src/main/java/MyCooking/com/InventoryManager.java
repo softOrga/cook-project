@@ -1,20 +1,17 @@
 package MyCooking.com;
 
-import MyCooking.com.models.*;
-
 import java.util.*;
+
+import MyCooking.com.models.Supplier;
+import MyCooking.com.models.SupplierService;
 
 public class InventoryManager {
     private final Map<String, Integer> stock = new HashMap<>();
     private final SupplierService supplierService = new SupplierService();
     private final List<String> purchaseOrders = new ArrayList<>();
 
-    private static final String PRICE_LABEL = " | Price: $";
-    private static final String DELIVERY_LABEL = " | Delivery in: ";
-    private static final String ETA_LABEL = " | ETA: ";
-    private static final String FROM_LABEL = " | From: ";
-    private static final String SUPPLIER_LABEL = " | Supplier: ";
-    private static final String DAYS_LABEL = " days";
+    private boolean isMonitoring = false;  
+    private List<String> lastCriticalItems = new ArrayList<>();  
 
     public InventoryManager() {
         stock.put("tomato", 5);
@@ -27,7 +24,12 @@ public class InventoryManager {
     }
 
     public void monitorStock() {
+        isMonitoring = true;
         System.out.println("Stock monitoring initialized.");
+    }
+
+    public boolean isMonitoring() {
+        return isMonitoring;
     }
 
     public void viewStock() {
@@ -37,45 +39,49 @@ public class InventoryManager {
         }
     }
 
-    public void checkStock(String ingredient) {
+    public boolean checkStock(String ingredient) {
         int quantity = stock.getOrDefault(ingredient, 0);
         if (quantity < 3) {
             System.out.println("Low stock alert for: " + ingredient);
+            return true;
         } else {
             System.out.println("Stock level for " + ingredient + " is sufficient.");
+            return false;
         }
     }
 
-    public void checkLowStockAndSuggestRestock() {
+    public List<String> checkLowStockAndSuggestRestock() {
         System.out.println("\nChecking for low stock...");
-        boolean found = false;
+        List<String> lowStockItems = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() < 3) {
                 System.out.println("Restock suggested for: " + entry.getKey());
-                found = true;
+                lowStockItems.add(entry.getKey());
             }
         }
-        if (!found) {
+        if (lowStockItems.isEmpty()) {
             System.out.println("All items are sufficiently stocked.");
         }
+        return lowStockItems;
     }
 
-    public void suggestRestocking() {
+    public List<String> suggestRestocking() {
         System.out.println("\nSuggested restocks:");
-        boolean found = false;
+        List<String> suggested = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() < 3) {
                 String ingredient = entry.getKey();
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 System.out.println("- " + ingredient + " is low. Best supplier: " + supplier.getName() +
-                        PRICE_LABEL + supplier.getPrice() +
-                        DELIVERY_LABEL + supplier.getDeliveryDays() + DAYS_LABEL);
-                found = true;
+                        " | Price: $" + supplier.getPrice() +
+                        " | Delivery in: " + supplier.getDeliveryDays() + " days");
+                suggested.add(ingredient);
             }
         }
-        if (!found) {
+        if (suggested.isEmpty()) {
             System.out.println("No restocks needed at this time.");
         }
+        return suggested;
     }
 
     public void openPurchasingInterface() {
@@ -83,45 +89,53 @@ public class InventoryManager {
         for (String ingredient : stock.keySet()) {
             Supplier supplier = supplierService.getBestSupplier(ingredient);
             System.out.println("Ingredient: " + ingredient +
-                    PRICE_LABEL + supplier.getPrice() +
-                    SUPPLIER_LABEL + supplier.getName() +
-                    DELIVERY_LABEL + supplier.getDeliveryDays() + DAYS_LABEL);
+                    " | Price: $" + supplier.getPrice() +
+                    " | Supplier: " + supplier.getName() +
+                    " | Delivery in: " + supplier.getDeliveryDays() + " days");
         }
     }
 
-    public void fetchSupplierPrices() {
+    public Map<String, Double> fetchSupplierPrices() {
         System.out.println("\nReal-time supplier prices:");
+        Map<String, Double> prices = new HashMap<>();
         for (String ingredient : stock.keySet()) {
             double price = supplierService.getRealTimePrice(ingredient);
+            prices.put(ingredient, price);
             System.out.println("- " + ingredient + ": $" + price);
         }
+        return prices;
     }
 
     public List<String> detectCriticalStock() {
-        List<String> criticalItems = new ArrayList<>();
+        lastCriticalItems.clear();
         System.out.println("\nDetecting critically low stock...");
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() <= 2) {
                 System.out.println("CRITICAL: " + entry.getKey() + " is almost out of stock!");
-                criticalItems.add(entry.getKey());
+                lastCriticalItems.add(entry.getKey());
             }
         }
-        if (criticalItems.isEmpty()) {
+        if (lastCriticalItems.isEmpty()) {
             System.out.println("No critical items found.");
         }
-        return criticalItems;
+        return new ArrayList<>(lastCriticalItems);
     }
 
-    public void generatePurchaseOrder() {
+    public List<String> getLastCriticalItems() {
+        return new ArrayList<>(lastCriticalItems);
+    }
+
+    public List<String> generatePurchaseOrder() {
+        purchaseOrders.clear();
         System.out.println("\nGenerating purchase order for low/critical ingredients...");
         for (Map.Entry<String, Integer> entry : stock.entrySet()) {
             if (entry.getValue() < 3) {
                 String ingredient = entry.getKey();
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 String order = "Order: " + ingredient +
-                        FROM_LABEL + supplier.getName() +
-                        PRICE_LABEL + supplier.getPrice() +
-                        ETA_LABEL + supplier.getDeliveryDays() + DAYS_LABEL;
+                        " | From: " + supplier.getName() +
+                        " | Price: $" + supplier.getPrice() +
+                        " | ETA: " + supplier.getDeliveryDays() + " days";
                 purchaseOrders.add(order);
                 System.out.println(order);
             }
@@ -129,39 +143,29 @@ public class InventoryManager {
         if (purchaseOrders.isEmpty()) {
             System.out.println("No purchase orders needed.");
         }
+        return new ArrayList<>(purchaseOrders);
     }
 
-    public void viewPurchaseOrders() {
-        System.out.println("\nAll Generated Purchase Orders:");
-        if (purchaseOrders.isEmpty()) {
-            System.out.println("No purchase orders have been generated.");
-        } else {
-            for (String order : purchaseOrders) {
-                System.out.println("- " + order);
-            }
-        }
+    public List<String> getPurchaseOrders() {
+        return new ArrayList<>(purchaseOrders);
     }
 
-    public void useIngredient(String ingredient) {
+    public boolean useIngredient(String ingredient) {
         if (stock.containsKey(ingredient)) {
             int quantity = stock.get(ingredient);
             if (quantity > 0) {
                 stock.put(ingredient, quantity - 1);
+                System.out.println("Used one unit of " + ingredient + ". Remaining: " + (quantity - 1));
+                return true;
             } else {
                 System.out.println("Warning: Ingredient '" + ingredient + "' is out of stock!");
+                return false;
             }
         } else {
             System.out.println("Warning: Ingredient '" + ingredient + "' not found in inventory!");
+            return false;
         }
     }
-    void testCheckStock_SufficientStock() {
-        InventoryManager im = new InventoryManager();
-        im.checkStock("tomato");}
-    void testCheckStock_LowStock() {
-        InventoryManager im = new InventoryManager();
-        im.useIngredient("cheese");
-        im.checkStock("cheese");}
-   
 }
 
 

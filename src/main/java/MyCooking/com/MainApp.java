@@ -376,7 +376,7 @@ public class MainApp {
                     break;
                 case "7":
                     System.out.println("\n=== Purchase Orders ===");
-                    inventoryManager.viewPurchaseOrders();
+                    inventoryManager.getPurchaseOrders();
                     break;
                 case "0":
                     managing = false;
