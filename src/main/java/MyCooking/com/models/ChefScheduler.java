@@ -48,5 +48,3 @@ public class ChefScheduler {
         return "Grill";
     }
 }
-
-
