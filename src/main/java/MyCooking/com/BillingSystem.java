@@ -26,24 +26,17 @@ public class BillingSystem {
         }
     }
 
-    private void loadAdminPassword() {
-        // حاول الحصول على كلمة المرور من خاصية النظام أولاً
-        String propPassword = System.getProperty("ADMIN_PASSWORD");
-        if (propPassword != null && !propPassword.trim().isEmpty()) {
-            adminPassword = propPassword.trim();
-            logger.info("Admin password loaded from system property.");
-            return;
+    protected void loadAdminPassword() {
+        String envPassword = System.getProperty("ADMIN_PASSWORD");
+        if (envPassword == null || envPassword.trim().isEmpty()) {
+            envPassword = System.getenv("ADMIN_PASSWORD");
         }
-
-        // ثم حاول من متغير البيئة
-        String envPassword = System.getenv("ADMIN_PASSWORD");
         if (envPassword != null && !envPassword.trim().isEmpty()) {
             adminPassword = envPassword.trim();
-            logger.info("Admin password loaded from environment variable.");
+            logger.info("Admin password loaded from system property or environment variable.");
             return;
         }
 
-        // ثم من الملف password.txt داخل resources
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
             if (input == null) {
                 logger.warning("password.txt not found in resources folder");
