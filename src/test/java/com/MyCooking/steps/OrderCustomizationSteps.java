@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class OrderCustomizationSteps {
 
-    OrderCustomizationManager customizationManager = new OrderCustomizationManager(new CustomerManager());
+	OrderCustomizationManager customizationManager = new OrderCustomizationManager();
 
     @Given("the customer is creating a new meal request")
     public void startMealRequest() {

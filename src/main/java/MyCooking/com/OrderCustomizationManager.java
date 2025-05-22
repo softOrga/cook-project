@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import MyCooking.com.models.CustomerManager;
-
 public class OrderCustomizationManager {
     private static final Logger logger = Logger.getLogger(OrderCustomizationManager.class.getName());
 
     private List<String> selectedIngredients;
-    private CustomerManager customerManager;
 
-    public OrderCustomizationManager(CustomerManager customerManager) {
-        this.customerManager = customerManager;
+    public OrderCustomizationManager() {
         this.selectedIngredients = new ArrayList<>();
     }
 
@@ -30,7 +26,7 @@ public class OrderCustomizationManager {
     }
 
     public void saveMeal() {
-        logger.info("Meal saved with ingredients: " + selectedIngredients);
+        logger.log(java.util.logging.Level.INFO, "Meal saved with ingredients: {0}", selectedIngredients);
     }
 
     public void validateIngredients() {
