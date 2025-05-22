@@ -10,9 +10,14 @@ public class TaskScheduler {
     }
 
     public void assignTaskToChef(Meal meal) {
+        if (meal == null || meal.getIngredients() == null) {
+           
+            return;
+        }
+
         String type = detectMealType(meal);
         for (Chef chef : chefs) {
-            if (chef.getSpecialization().equalsIgnoreCase(type)) {
+            if (chef.getSpecialization() != null && chef.getSpecialization().equalsIgnoreCase(type)) {
                 chef.assignMeal(meal);
                 System.out.println("Assigned to Chef: " + chef.getName());
                 return;
@@ -20,7 +25,7 @@ public class TaskScheduler {
         }
 
         for (Chef chef : chefs) {
-            if (chef.getName().equalsIgnoreCase("Default Chef")) {
+            if (chef.getName() != null && chef.getName().equalsIgnoreCase("Default Chef")) {
                 chef.assignMeal(meal);
                 System.out.println("Assigned to Default Chef: " + chef.getName());
                 return;
@@ -29,9 +34,20 @@ public class TaskScheduler {
     }
 
     public String assignTaskToChefAndReturnName(Meal meal) {
+        if (meal == null || meal.getIngredients() == null) {
+           
+            for (Chef chef : chefs) {
+                if (chef.getName() != null && chef.getName().equalsIgnoreCase("Default Chef")) {
+                    chef.assignMeal(meal);
+                    return chef.getName();
+                }
+            }
+            return "Unknown";
+        }
+
         String type = detectMealType(meal);
         for (Chef chef : chefs) {
-            if (chef.getSpecialization().equalsIgnoreCase(type)) {
+            if (chef.getSpecialization() != null && chef.getSpecialization().equalsIgnoreCase(type)) {
                 chef.assignMeal(meal);
                 System.out.println("Assigned to Chef: " + chef.getName());
                 return chef.getName();
@@ -39,7 +55,7 @@ public class TaskScheduler {
         }
 
         for (Chef chef : chefs) {
-            if (chef.getName().equalsIgnoreCase("Default Chef")) {
+            if (chef.getName() != null && chef.getName().equalsIgnoreCase("Default Chef")) {
                 chef.assignMeal(meal);
                 System.out.println("Assigned to Default Chef: " + chef.getName());
                 return chef.getName();
@@ -50,9 +66,16 @@ public class TaskScheduler {
     }
 
     private String detectMealType(Meal meal) {
+        if (meal == null || meal.getIngredients() == null) {
+            return "General";
+        }
+
         for (Ingredient ing : meal.getIngredients()) {
+            if (ing == null || ing.getName() == null) continue;  
+
             String name = ing.getName().toLowerCase();
-            if (name.contains("tofu") || name.contains("vegan") || name.contains("almond milk") || name.contains("carrot") || name.contains("lettuce")) {
+            if (name.contains("tofu") || name.contains("vegan") || name.contains("almond milk") 
+                || name.contains("carrot") || name.contains("lettuce")) {
                 return "Vegan";
             } else if (name.contains("chicken") || name.contains("beef") || name.contains("grill")) {
                 return "Grill";
@@ -61,5 +84,3 @@ public class TaskScheduler {
         return "General";
     }
 }
-
-
