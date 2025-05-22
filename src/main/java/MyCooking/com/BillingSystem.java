@@ -17,27 +17,16 @@ public class BillingSystem {
         loadAdminPassword();
     }
 
-    public BillingSystem(String injectedPassword) {
-        if (injectedPassword != null) {
-            this.adminPassword = injectedPassword.trim();
-            logger.info("Admin password injected for testing.");
-        } else {
-            loadAdminPassword();
-        }
+    private void loadAdminPassword() {
         
-    }
-
-    protected void loadAdminPassword() {
-        String envPassword = System.getProperty("ADMIN_PASSWORD");
-        if (envPassword == null || envPassword.trim().isEmpty()) {
-            envPassword = System.getenv("ADMIN_PASSWORD");
-        }
+        String envPassword = System.getenv("ADMIN_PASSWORD");
         if (envPassword != null && !envPassword.trim().isEmpty()) {
             adminPassword = envPassword.trim();
-            logger.info("Admin password loaded from system property or environment variable.");
+            logger.info("Admin password loaded from environment variable.");
             return;
         }
 
+    
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
             if (input == null) {
                 logger.warning("password.txt not found in resources folder");
@@ -58,6 +47,7 @@ public class BillingSystem {
             adminPassword = "";
         }
     }
+
 
     public boolean completeOrder(String customerId, double amount) {
         if (customerId == null || customerId.isEmpty()) {
