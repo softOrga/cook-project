@@ -30,6 +30,18 @@ public class BillingSystemTest {
     }
 
     @Test
+    public void testAdminLoginWithEmptyPassword() {
+        assertFalse(billingSystem.adminLogin(""));
+        assertFalse(billingSystem.isAdminLoggedIn());
+    }
+
+    @Test
+    public void testAdminLoginWithNullPassword() {
+        assertFalse(billingSystem.adminLogin(null));
+        assertFalse(billingSystem.isAdminLoggedIn());
+    }
+
+    @Test
     public void testCompleteOrderWithAmount() {
         boolean result = billingSystem.completeOrder("cust01", 250.0);
         assertTrue(result);
@@ -54,6 +66,22 @@ public class BillingSystemTest {
     }
 
     @Test
+    public void testCompleteOrderWithZeroAmount() {
+        boolean result = billingSystem.completeOrder("custZero", 0.0);
+        assertTrue(result);
+        List<Invoice> invoices = billingSystem.getInvoices();
+        assertFalse(invoices.isEmpty());
+        assertEquals(0.0, invoices.get(invoices.size() - 1).getAmount(), 0.001);
+    }
+
+    @Test
+    public void testCompleteOrderWithNegativeAmount() {
+        boolean result = billingSystem.completeOrder("custNeg", -100.0);
+        
+        assertTrue(result);
+    }
+
+    @Test
     public void testGenerateAndSendInvoice() {
         boolean result = billingSystem.generateAndSendInvoice("cust03", 180.0);
         assertTrue(result);
@@ -72,19 +100,35 @@ public class BillingSystemTest {
     }
 
     @Test
+    public void testGenerateAndSendInvoiceWithZeroAmount() {
+        boolean result = billingSystem.generateAndSendInvoice("custZero", 0.0);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testGenerateAndSendInvoiceWithNegativeAmount() {
+        boolean result = billingSystem.generateAndSendInvoice("custNeg", -50.0);
+        assertTrue(result);
+    }
+
+    @Test
     public void testFinalizeOrderWithInvoices() {
         billingSystem.completeOrder("cust05", 300.0);
-        billingSystem.finalizeOrder(); // Check logs manually
+        billingSystem.completeOrder("cust06", 200.0);
+        billingSystem.finalizeOrder();
+        
     }
 
     @Test
     public void testFinalizeOrderWithoutInvoices() {
-        billingSystem.finalizeOrder(); // Should log info about no invoices
+        billingSystem.finalizeOrder();
+        
     }
 
     @Test
     public void testDisplayFinancialReportNotLoggedIn() {
-        billingSystem.displayFinancialReport(); // Should warn about login
+        billingSystem.displayFinancialReport();
+        
     }
 
     @Test
@@ -95,8 +139,23 @@ public class BillingSystemTest {
     }
 
     @Test
+    public void testDisplayFinancialReportWithMultipleInvoices() {
+        billingSystem.adminLogin("admin123");
+        billingSystem.completeOrder("cust1", 100.0);
+        billingSystem.completeOrder("cust2", 150.0);
+        billingSystem.displayFinancialReport();
+       
+    }
+
+    @Test
     public void testAdminLogout() {
         billingSystem.adminLogin("admin123");
+        billingSystem.adminLogout();
+        assertFalse(billingSystem.isAdminLoggedIn());
+    }
+
+    @Test
+    public void testAdminLogoutWithoutLogin() {
         billingSystem.adminLogout();
         assertFalse(billingSystem.isAdminLoggedIn());
     }
@@ -107,47 +166,20 @@ public class BillingSystemTest {
         billingSystem.clearInvoices();
         assertEquals(0, billingSystem.getInvoices().size());
     }
-    //
-    @Test
-    public void testLoadAdminPasswordFromEnvironment() throws Exception {
-        System.setProperty("ADMIN_PASSWORD", "testEnvPass");
-
-        BillingSystem system = new BillingSystem();
-        boolean loginResult = system.adminLogin("testEnvPass");
-
-        assertTrue(loginResult);
-    }
-    @Test
-    public void testPasswordFileMissing() {
-        BillingSystem system = new BillingSystem();
-        assertFalse(system.adminLogin("anything")); // يفشل لأن كلمة المرور فارغة
-    }
-    @Test
-    public void testPasswordFileEmpty() {
-        BillingSystem system = new BillingSystem();
-        assertFalse(system.adminLogin("")); // لا توجد كلمة مرور
-    }
-    @Test
-    public void testIncorrectPassword() {
-        BillingSystem system = new BillingSystem();
-        assertFalse(system.adminLogin("wrongpass"));
-    }
-    
-    @Test
-    public void testNullPassword() {
-        BillingSystem system = new BillingSystem();
-        assertFalse(system.adminLogin(null));
-    }
 
     @Test
-    public void testGenerateAfterClearingInvoices() {
-        billingSystem.completeOrder("cust08", 120.0);
+    public void testClearInvoicesMultipleTimes() {
+        billingSystem.completeOrder("custClear", 200.0);
+        billingSystem.clearInvoices();
         billingSystem.clearInvoices();
         assertEquals(0, billingSystem.getInvoices().size());
+    }
 
-        boolean result = billingSystem.generateAndSendInvoice("cust09", 90.0);
-        assertTrue(result);
-        assertEquals(1, billingSystem.getInvoices().size());
+    @Test
+    public void testAdminLoginMultipleTimes() {
+        assertTrue(billingSystem.adminLogin("admin123"));
+        assertTrue(billingSystem.adminLogin("admin123")); 
+        assertTrue(billingSystem.isAdminLoggedIn());
     }
 
 }

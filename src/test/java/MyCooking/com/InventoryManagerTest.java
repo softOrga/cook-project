@@ -27,49 +27,60 @@ public class InventoryManagerTest {
 
     @Test
     public void testCheckStockLow() {
-        assertTrue(inventory.checkStock("cheese")); // initial = 2
+       
+        assertTrue(inventory.checkStock("cheese"));
     }
 
     @Test
     public void testCheckStockSufficient() {
-        assertFalse(inventory.checkStock("tomato")); // initial = 5
+       
+        assertFalse(inventory.checkStock("tomato"));
     }
 
     @Test
-    public void testDetectCriticalStock() {
-        List<String> critical = inventory.detectCriticalStock();
-        assertTrue(critical.contains("cheese")); // cheese = 2
+    public void testCheckStockNonExistentIngredient() {
+        
+        assertTrue(inventory.checkStock("nonexistent"));
     }
 
     @Test
-    public void testUseIngredientAvailable() {
-        assertTrue(inventory.useIngredient("onion")); // initial = 4
-    }
-
-    @Test
-    public void testUseIngredientUnavailable() {
-        // Use all cheese (2 units)
-        inventory.useIngredient("cheese");
-        inventory.useIngredient("cheese");
-        assertFalse(inventory.useIngredient("cheese")); // now 0
-    }
-
-    @Test
-    public void testGeneratePurchaseOrder() {
-        List<String> orders = inventory.generatePurchaseOrder();
-        assertTrue(orders.size() > 0); // there should be low stock items
-    }
-
-    @Test
-    public void testFetchSupplierPrices() {
-        Map<String, Double> prices = inventory.fetchSupplierPrices();
-        assertNotNull(prices.get("tomato"));
+    public void testCheckLowStockAndSuggestRestock() {
+        List<String> lowStock = inventory.checkLowStockAndSuggestRestock();
+        assertTrue(lowStock.contains("cheese"));
+        assertTrue(lowStock.contains("milk"));
+        assertFalse(lowStock.contains("tomato"));
     }
 
     @Test
     public void testSuggestRestocking() {
         List<String> suggested = inventory.suggestRestocking();
         assertTrue(suggested.contains("cheese"));
+        assertTrue(suggested.contains("milk"));
+        assertFalse(suggested.contains("tomato"));
+    }
+
+    @Test
+    public void testOpenPurchasingInterface() {
+        
+        inventory.openPurchasingInterface();
+    }
+
+    @Test
+    public void testFetchSupplierPrices() {
+        Map<String, Double> prices = inventory.fetchSupplierPrices();
+        assertNotNull(prices);
+       
+        assertTrue(prices.containsKey("tomato"));
+        assertTrue(prices.containsKey("cheese"));
+        assertTrue(prices.get("tomato") >= 0);
+    }
+
+    @Test
+    public void testDetectCriticalStock() {
+        List<String> critical = inventory.detectCriticalStock();
+        assertTrue(critical.contains("cheese")); 
+        assertTrue(critical.contains("milk"));    
+        assertFalse(critical.contains("tomato")); 
     }
 
     @Test
@@ -78,5 +89,57 @@ public class InventoryManagerTest {
         List<String> critical = inventory.getLastCriticalItems();
         assertNotNull(critical);
         assertTrue(critical.contains("cheese"));
+        assertTrue(critical.contains("milk"));
+    }
+
+    @Test
+    public void testGeneratePurchaseOrder() {
+        List<String> orders = inventory.generatePurchaseOrder();
+        assertNotNull(orders);
+        assertFalse(orders.isEmpty());
+        boolean containsCheeseOrder = false;
+        for (String order : orders) {
+            if (order.contains("cheese")) {
+                containsCheeseOrder = true;
+                break;
+            }
+        }
+        assertTrue(containsCheeseOrder);
+    }
+
+    @Test
+    public void testGetPurchaseOrdersAfterGenerate() {
+        inventory.generatePurchaseOrder();
+        List<String> orders = inventory.getPurchaseOrders();
+        assertNotNull(orders);
+        assertFalse(orders.isEmpty());
+    }
+
+    @Test
+    public void testUseIngredientAvailable() {
+       
+        assertTrue(inventory.useIngredient("onion"));
+        // Quantity should decrease by 1
+        assertEquals(3, inventory.stock.get("onion").intValue());
+    }
+
+    @Test
+    public void testUseIngredientUnavailable() {
+      
+        assertTrue(inventory.useIngredient("cheese"));
+        assertTrue(inventory.useIngredient("cheese"));
+        
+        assertFalse(inventory.useIngredient("cheese"));
+    }
+
+    @Test
+    public void testUseIngredientNotFound() {
+        assertFalse(inventory.useIngredient("nonexistent"));
+    }
+
+    @Test
+    public void testViewStock() {
+      
+        inventory.viewStock();
     }
 }

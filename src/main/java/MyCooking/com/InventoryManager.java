@@ -6,7 +6,7 @@ import MyCooking.com.models.Supplier;
 import MyCooking.com.models.SupplierService;
 
 public class InventoryManager {
-    private final Map<String, Integer> stock = new HashMap<>();
+    final Map<String, Integer> stock = new HashMap<>();
     private final SupplierService supplierService = new SupplierService();
     private final List<String> purchaseOrders = new ArrayList<>();
 
