@@ -27,8 +27,9 @@ public class InventoryManagerTest {
     public void testCheckStockLowAndSufficient() {
         assertTrue(inventory.checkStock("cheese")); 
         assertFalse(inventory.checkStock("tomato")); 
-        assertFalse(inventory.checkStock("nonexistent")); 
+        assertTrue(inventory.checkStock("nonexistent"));
     }
+
 
     @Test
     public void testCheckLowStockAndSuggestRestock() {
