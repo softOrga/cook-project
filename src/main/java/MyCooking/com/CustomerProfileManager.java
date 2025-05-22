@@ -51,7 +51,9 @@ public class CustomerProfileManager {
             System.out.println("Allergy: " + customer.getAllergy());
         }
     }
-
+    public Customer getCustomerByName(String name) {
+        return customers.get(name);
+    }
 
 }
 
