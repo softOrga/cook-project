@@ -1,20 +1,49 @@
 package MyCooking.com;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import MyCooking.com.models.Invoice;
 
 public class BillingSystem {
     private static final Logger logger = Logger.getLogger(BillingSystem.class.getName());
     private List<Invoice> invoices = new ArrayList<>();
     private boolean adminLoggedIn = false;
-    private final String ADMIN_PASSWORD = "admin123";
+    private String adminPassword = "";
+
+    public BillingSystem() {
+        loadAdminPassword();
+    }
+
+    private void loadAdminPassword() {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
+            if (input == null) {
+                logger.warning("password.txt not found in resources folder");
+                adminPassword = "";
+                return;
+            }
+            Scanner scanner = new Scanner(input);
+            if (scanner.hasNextLine()) {
+                adminPassword = scanner.nextLine().trim();
+                logger.info("Admin password loaded from file.");
+            } else {
+                logger.warning("password.txt is empty.");
+                adminPassword = "";
+            }
+            scanner.close();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error reading admin password file", e);
+            adminPassword = "";
+        }
+    }
 
     public void completeOrder(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
-        logger.log(Level.INFO, "Order completed for customer ID: {0}", customerId);
+        logger.log(Level.INFO, "Order completed for customer: {0}", customerId);
     }
 
     public void finalizeOrder() {
@@ -30,11 +59,10 @@ public class BillingSystem {
     }
 
     public void adminLogin(String password) {
-        if (password.equals(ADMIN_PASSWORD)) {
+        if (password.equals(adminPassword)) {
             adminLoggedIn = true;
-            logger.log(Level.INFO, "Admin logged in.");
+            logger.log(Level.INFO, "Admin logged in successfully.");
         } else {
-            adminLoggedIn = false; 
             logger.log(Level.WARNING, "Incorrect password. Access denied.");
         }
     }
@@ -46,20 +74,11 @@ public class BillingSystem {
         }
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
         logger.log(Level.INFO, "--- Financial Report ---");
-        logger.log(Level.INFO, "Total Invoices: {0}", invoices.size());
-        logger.log(Level.INFO, "Total Revenue: ${0}", total);
+        logger.log(Level.INFO, "Total invoices: {0}", invoices.size());
+        logger.log(Level.INFO, "Total revenue: ${0}", total);
     }
 
     public List<Invoice> getInvoices() {
         return invoices;
-    }
-
-    public void reset() {
-        invoices.clear();
-        adminLoggedIn = false;
-    }
-
-    public boolean isAdminLoggedIn() {
-        return adminLoggedIn;
     }
 }
