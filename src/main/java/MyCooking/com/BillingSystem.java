@@ -18,6 +18,15 @@ public class BillingSystem {
     }
 
     private void loadAdminPassword() {
+        
+        String envPassword = System.getenv("ADMIN_PASSWORD");
+        if (envPassword != null && !envPassword.trim().isEmpty()) {
+            adminPassword = envPassword.trim();
+            logger.info("Admin password loaded from environment variable.");
+            return;
+        }
+
+    
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
             if (input == null) {
                 logger.warning("password.txt not found in resources folder");
@@ -38,6 +47,7 @@ public class BillingSystem {
             adminPassword = "";
         }
     }
+
 
     public boolean completeOrder(String customerId, double amount) {
         if (customerId == null || customerId.isEmpty()) {
