@@ -107,4 +107,47 @@ public class BillingSystemTest {
         billingSystem.clearInvoices();
         assertEquals(0, billingSystem.getInvoices().size());
     }
+    //
+    @Test
+    public void testLoadAdminPasswordFromEnvironment() throws Exception {
+        System.setProperty("ADMIN_PASSWORD", "testEnvPass");
+
+        BillingSystem system = new BillingSystem();
+        boolean loginResult = system.adminLogin("testEnvPass");
+
+        assertTrue(loginResult);
+    }
+    @Test
+    public void testPasswordFileMissing() {
+        BillingSystem system = new BillingSystem();
+        assertFalse(system.adminLogin("anything")); // يفشل لأن كلمة المرور فارغة
+    }
+    @Test
+    public void testPasswordFileEmpty() {
+        BillingSystem system = new BillingSystem();
+        assertFalse(system.adminLogin("")); // لا توجد كلمة مرور
+    }
+    @Test
+    public void testIncorrectPassword() {
+        BillingSystem system = new BillingSystem();
+        assertFalse(system.adminLogin("wrongpass"));
+    }
+    
+    @Test
+    public void testNullPassword() {
+        BillingSystem system = new BillingSystem();
+        assertFalse(system.adminLogin(null));
+    }
+
+    @Test
+    public void testGenerateAfterClearingInvoices() {
+        billingSystem.completeOrder("cust08", 120.0);
+        billingSystem.clearInvoices();
+        assertEquals(0, billingSystem.getInvoices().size());
+
+        boolean result = billingSystem.generateAndSendInvoice("cust09", 90.0);
+        assertTrue(result);
+        assertEquals(1, billingSystem.getInvoices().size());
+    }
+
 }
