@@ -1,9 +1,12 @@
 package MyCooking.com;
 
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import MyCooking.com.models.Invoice;
 
 public class BillingSystem {
+    private static final Logger logger = Logger.getLogger(BillingSystem.class.getName());
     private List<Invoice> invoices = new ArrayList<>();
     private boolean adminLoggedIn = false;
     private final String ADMIN_PASSWORD = "admin123";
@@ -11,46 +14,42 @@ public class BillingSystem {
     public void completeOrder(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
-        System.out.println("Order completed for customer ID: " + customerId);
+        logger.info("Order completed for customer ID: " + customerId);
     }
 
     public void finalizeOrder() {
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
-        System.out.println("Order has been finalized.");
-        System.out.println("Total order: $" + total);
+        logger.info("Order has been finalized.");
+        logger.info("Total order: $" + total);
     }
 
     public void generateAndSendInvoice(String customerId) {
-        Invoice invoice = new Invoice(customerId, 100.0); 
+        Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
-        System.out.println("Invoice generated and sent to customer: " + customerId);
+        logger.info("Invoice generated and sent to customer: " + customerId);
     }
 
     public void adminLogin(String password) {
         if (password.equals(ADMIN_PASSWORD)) {
             adminLoggedIn = true;
-            System.out.println("Admin logged in.");
+            logger.info("Admin logged in.");
         } else {
-            System.out.println("Incorrect password. Access denied.");
+            logger.warning("Incorrect password. Access denied.");
         }
     }
 
     public void displayFinancialReport() {
         if (!adminLoggedIn) {
-            System.out.println("Access denied. Admin login required.");
+            logger.warning("Access denied. Admin login required.");
             return;
         }
-
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
-        System.out.println("--- Financial Report ---");
-        System.out.println("Total Invoices: " + invoices.size());
-        System.out.println("Total Revenue: $" + total);
+        logger.info("--- Financial Report ---");
+        logger.info("Total Invoices: " + invoices.size());
+        logger.info("Total Revenue: $" + total);
     }
 
     public List<Invoice> getInvoices() {
         return invoices;
     }
 }
-
-
-
