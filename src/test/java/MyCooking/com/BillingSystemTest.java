@@ -4,6 +4,7 @@ import MyCooking.com.models.Invoice;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -14,13 +15,12 @@ public class BillingSystemTest {
 
     @Before
     public void setUp() {
-        billingSystem = new BillingSystem();
+        billingSystem = new BillingSystem("admin123");
     }
 
     @Test
     public void testAdminLoginCorrectPassword() {
-        
-        billingSystem.adminPassword = "admin123"; 
+        billingSystem.adminPassword = "admin123";
         assertTrue(billingSystem.adminLogin("admin123"));
         assertTrue(billingSystem.isAdminLoggedIn());
     }
@@ -91,14 +91,14 @@ public class BillingSystemTest {
     public void testFinalizeOrderWithInvoices() {
         billingSystem.completeOrder("c1", 10);
         billingSystem.completeOrder("c2", 20);
-        billingSystem.finalizeOrder(); 
+        billingSystem.finalizeOrder();
         assertFalse(billingSystem.getInvoices().isEmpty());
     }
 
     @Test
     public void testFinalizeOrderNoInvoices() {
         billingSystem.clearInvoices();
-        billingSystem.finalizeOrder(); 
+        billingSystem.finalizeOrder();
         assertTrue(billingSystem.getInvoices().isEmpty());
     }
 
@@ -122,6 +122,34 @@ public class BillingSystemTest {
         billingSystem.completeOrder("c1", 10);
         billingSystem.clearInvoices();
         assertTrue(billingSystem.getInvoices().isEmpty());
+    }
+
+    @Test
+    public void testLoadAdminPasswordFromEnvironment() throws Exception {
+        System.setProperty("ADMIN_PASSWORD", "envAdmin123");
+        BillingSystem system = new BillingSystem();
+        Field passwordField = BillingSystem.class.getDeclaredField("adminPassword");
+        passwordField.setAccessible(true);
+        String password = (String) passwordField.get(system);
+        assertEquals("envAdmin123", password);
+        System.clearProperty("ADMIN_PASSWORD");
+    }
+
+    @Test
+    public void testLoadAdminPasswordFromEmptyFile() throws Exception {
+        System.clearProperty("ADMIN_PASSWORD");
+        BillingSystem system = new BillingSystem();
+        Field passwordField = BillingSystem.class.getDeclaredField("adminPassword");
+        passwordField.setAccessible(true);
+        String password = (String) passwordField.get(system);
+        assertEquals("", password);
+    }
+
+    @Test
+    public void testAdminLoginFailsIfPasswordFileMissing() {
+        System.clearProperty("ADMIN_PASSWORD");
+        BillingSystem system = new BillingSystem();
+        assertFalse(system.adminLogin("anyPassword"));
     }
 }
 

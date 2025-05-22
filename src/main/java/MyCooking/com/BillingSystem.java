@@ -17,8 +17,25 @@ public class BillingSystem {
         loadAdminPassword();
     }
 
+    public BillingSystem(String injectedPassword) {
+        if (injectedPassword != null) {
+            this.adminPassword = injectedPassword.trim();
+            logger.info("Admin password injected for testing.");
+        } else {
+            loadAdminPassword();
+        }
+    }
+
     private void loadAdminPassword() {
-        
+        // حاول الحصول على كلمة المرور من خاصية النظام أولاً
+        String propPassword = System.getProperty("ADMIN_PASSWORD");
+        if (propPassword != null && !propPassword.trim().isEmpty()) {
+            adminPassword = propPassword.trim();
+            logger.info("Admin password loaded from system property.");
+            return;
+        }
+
+        // ثم حاول من متغير البيئة
         String envPassword = System.getenv("ADMIN_PASSWORD");
         if (envPassword != null && !envPassword.trim().isEmpty()) {
             adminPassword = envPassword.trim();
@@ -26,7 +43,7 @@ public class BillingSystem {
             return;
         }
 
-    
+        // ثم من الملف password.txt داخل resources
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
             if (input == null) {
                 logger.warning("password.txt not found in resources folder");
@@ -47,7 +64,6 @@ public class BillingSystem {
             adminPassword = "";
         }
     }
-
 
     public boolean completeOrder(String customerId, double amount) {
         if (customerId == null || customerId.isEmpty()) {
@@ -136,4 +152,3 @@ public class BillingSystem {
         logger.info("Admin logged out.");
     }
 }
-
