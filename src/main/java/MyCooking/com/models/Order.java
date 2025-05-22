@@ -1,10 +1,6 @@
 package MyCooking.com.models;
 
-import java.util.logging.Logger;
-
 public class Order {
-    private static final Logger logger = Logger.getLogger(Order.class.getName());
-
     private String description;
     private String customerName;
     private String customerPhoneNumber;
@@ -18,7 +14,6 @@ public class Order {
     public String getDescription() {
         return description;
     }
-
     public String getCustomerName() {
         return customerName;
     }
@@ -28,8 +23,8 @@ public class Order {
     }
 
     public void displayOrderDetails() {
-        logger.info("Order Description: " + description);
-        logger.info("Customer Name: " + customerName);
-        logger.info("Customer Phone: " + customerPhoneNumber);
+        System.out.println("Order Description: " + description);
+        System.out.println("Customer Name: " + customerName);
+        System.out.println("Customer Phone: " + customerPhoneNumber);
     }
 }
