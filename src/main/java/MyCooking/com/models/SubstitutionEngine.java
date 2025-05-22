@@ -1,7 +1,5 @@
 package MyCooking.com.models;
 
-
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +21,12 @@ public class SubstitutionEngine {
     }
 
     public String suggestSubstitution(String ingredientName) {
-        if (!validator.isValid(ingredientName)) {
-            return substitutionMap.getOrDefault(ingredientName.toLowerCase(), "No substitute available");
+        String lowerName = ingredientName.toLowerCase();
+
+        if (substitutionMap.containsKey(lowerName)) {
+            return substitutionMap.get(lowerName);
         }
+
         return ingredientName;
     }
 }
-
-
