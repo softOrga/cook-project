@@ -3,36 +3,13 @@ package MyCooking.com;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
 import MyCooking.com.models.Invoice;
 
 public class BillingSystem {
     private static final Logger logger = Logger.getLogger(BillingSystem.class.getName());
     private List<Invoice> invoices = new ArrayList<>();
     private boolean adminLoggedIn = false;
-    private final String ADMIN_PASSWORD;
-
-    public BillingSystem() {
-        String pwd = null;
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("password.txt")) {
-            if (inputStream == null) {
-                throw new RuntimeException("password.txt not found in resources!");
-            }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            pwd = reader.readLine().trim();
-            if (pwd.isEmpty()) {
-                throw new IllegalStateException("Password file is empty!");
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Failed to read password file", e);
-            throw new RuntimeException("Could not initialize admin password", e);
-        }
-        ADMIN_PASSWORD = pwd;
-    }
+    private final String ADMIN_PASSWORD = "admin123";
 
     public void completeOrder(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0);
@@ -76,3 +53,4 @@ public class BillingSystem {
         return invoices;
     }
 }
+
