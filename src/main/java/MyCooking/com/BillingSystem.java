@@ -34,6 +34,7 @@ public class BillingSystem {
             adminLoggedIn = true;
             logger.log(Level.INFO, "Admin logged in.");
         } else {
+            adminLoggedIn = false; 
             logger.log(Level.WARNING, "Incorrect password. Access denied.");
         }
     }
@@ -51,5 +52,14 @@ public class BillingSystem {
 
     public List<Invoice> getInvoices() {
         return invoices;
+    }
+
+    public void reset() {
+        invoices.clear();
+        adminLoggedIn = false;
+    }
+
+    public boolean isAdminLoggedIn() {
+        return adminLoggedIn;
     }
 }

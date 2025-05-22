@@ -31,7 +31,7 @@ public class BillingSteps {
 
     @Given("the administrator logs into the system")
     public void adminLogin() {
-        billingSystem.adminLogin("admin01"); 
+        billingSystem.adminLogin("admin123"); 
     }
 
 
