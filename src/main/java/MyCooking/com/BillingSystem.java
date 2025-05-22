@@ -39,14 +39,19 @@ public class BillingSystem {
         }
     }
 
-    public void completeOrder(String customerId) {
+    public boolean completeOrder(String customerId, double amount) {
         if (customerId == null || customerId.isEmpty()) {
             logger.warning("Invalid customer ID provided.");
-            return;
+            return false;
         }
-        Invoice invoice = new Invoice(customerId, 100.0);
+        Invoice invoice = new Invoice(customerId, amount);
         invoices.add(invoice);
         logger.log(Level.INFO, "Order completed for customer: {0}", customerId);
+        return true;
+    }
+
+    public boolean completeOrder(String customerId) {
+        return completeOrder(customerId, 100.0);
     }
 
     public void finalizeOrder() {
@@ -59,27 +64,38 @@ public class BillingSystem {
         logger.log(Level.INFO, "Total order: ${0}", total);
     }
 
-    public void generateAndSendInvoice(String customerId) {
+    public boolean generateAndSendInvoice(String customerId, double amount) {
         if (customerId == null || customerId.isEmpty()) {
             logger.warning("Invalid customer ID provided.");
-            return;
+            return false;
         }
-        Invoice invoice = new Invoice(customerId, 100.0);
+        Invoice invoice = new Invoice(customerId, amount);
         invoices.add(invoice);
         logger.log(Level.INFO, "Invoice generated and sent to customer: {0}", customerId);
+        return true;
     }
 
-    public void adminLogin(String password) {
+    public boolean generateAndSendInvoice(String customerId) {
+        return generateAndSendInvoice(customerId, 100.0);
+    }
+
+    public boolean adminLogin(String password) {
         if (password == null) {
             logger.warning("Password is null.");
-            return;
+            return false;
         }
         if (password.equals(adminPassword)) {
             adminLoggedIn = true;
             logger.log(Level.INFO, "Admin logged in successfully.");
+            return true;
         } else {
             logger.log(Level.WARNING, "Incorrect password. Access denied.");
+            return false;
         }
+    }
+
+    public boolean isAdminLoggedIn() {
+        return adminLoggedIn;
     }
 
     public void displayFinancialReport() {
@@ -100,4 +116,14 @@ public class BillingSystem {
     public List<Invoice> getInvoices() {
         return new ArrayList<>(invoices);
     }
+
+    public void clearInvoices() {
+        invoices.clear();
+    }
+
+    public void adminLogout() {
+        adminLoggedIn = false;
+        logger.info("Admin logged out.");
+    }
 }
+
