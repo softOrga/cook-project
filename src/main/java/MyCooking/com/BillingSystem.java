@@ -14,43 +14,42 @@ public class BillingSystem {
     public void completeOrder(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
-        logger.info("Order completed for customer ID: " + customerId);
+        logger.log(Level.INFO, "Order completed for customer ID: {0}", customerId);
     }
 
     public void finalizeOrder() {
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
-        logger.info("Order has been finalized.");
-        logger.info("Total order: $" + total);
+        logger.log(Level.INFO, "Order has been finalized.");
+        logger.log(Level.INFO, "Total order: ${0}", total);
     }
 
     public void generateAndSendInvoice(String customerId) {
         Invoice invoice = new Invoice(customerId, 100.0);
         invoices.add(invoice);
-        logger.info("Invoice generated and sent to customer: " + customerId);
+        logger.log(Level.INFO, "Invoice generated and sent to customer: {0}", customerId);
     }
 
     public void adminLogin(String password) {
         if (password.equals(ADMIN_PASSWORD)) {
             adminLoggedIn = true;
-            logger.info("Admin logged in.");
+            logger.log(Level.INFO, "Admin logged in.");
         } else {
-            logger.warning("Incorrect password. Access denied.");
+            logger.log(Level.WARNING, "Incorrect password. Access denied.");
         }
     }
 
     public void displayFinancialReport() {
         if (!adminLoggedIn) {
-            logger.warning("Access denied. Admin login required.");
+            logger.log(Level.WARNING, "Access denied. Admin login required.");
             return;
         }
         double total = invoices.stream().mapToDouble(Invoice::getAmount).sum();
-        logger.info("--- Financial Report ---");
-        logger.info("Total Invoices: " + invoices.size());
-        logger.info("Total Revenue: $" + total);
+        logger.log(Level.INFO, "--- Financial Report ---");
+        logger.log(Level.INFO, "Total Invoices: {0}", invoices.size());
+        logger.log(Level.INFO, "Total Revenue: ${0}", total);
     }
 
     public List<Invoice> getInvoices() {
         return invoices;
     }
 }
-
