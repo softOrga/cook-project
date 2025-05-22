@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.Before;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class TaskSchedulerTest {
 
@@ -101,5 +100,58 @@ public class TaskSchedulerTest {
         String assignedChef = scheduler.assignTaskToChefAndReturnName(veganMeal);
         assertEquals("Alice", assignedChef);
         assertTrue(chef.getAssignedMeals().stream().anyMatch(m -> m.getName().equals("Salad")));
+    }
+
+    @Test
+    public void testAssignTaskToChef_withEmptyChefsList() {
+        TaskScheduler emptyScheduler = new TaskScheduler(Arrays.asList());
+        Meal meal = new Meal("Any Meal");
+        meal.addIngredient(new Ingredient("rice", 1));
+
+        // لا يجب أن يرمي استثناءً
+        emptyScheduler.assignTaskToChef(meal);
+    }
+
+    @Test
+    public void testAssignTaskToChef_assignsMealCorrectly() {
+        Meal veganMeal = new Meal("Vegan Salad");
+        veganMeal.addIngredient(new Ingredient("tofu", 1));
+        scheduler.assignTaskToChef(veganMeal);
+
+        assertTrue(veganChef.getAssignedMeals().contains(veganMeal));
+    }
+
+    @Test
+    public void testAssignTaskToChef_noMatchingSpecialization_noDefaultChef() {
+        Chef chefWithoutDefault = new Chef("Charlie", "Dessert");
+        TaskScheduler schedulerNoDefault = new TaskScheduler(Arrays.asList(chefWithoutDefault));
+
+        Meal unknownMeal = new Meal("Unknown Dish");
+        unknownMeal.addIngredient(new Ingredient("bread", 1));
+
+        schedulerNoDefault.assignTaskToChef(unknownMeal);
+        assertTrue(chefWithoutDefault.getAssignedMeals().isEmpty());
+    }
+
+    @Test
+    public void testAssignTaskToChefAndReturnName_withNullIngredients() {
+        Meal meal = new Meal("Empty Meal");
+        // بدون مكونات
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Default Chef", assignedChef);
+    }
+
+    @Test
+    public void testAssignTaskToChefAndReturnName_multipleMatchingChefs() {
+        Chef veganChef2 = new Chef("Eve", "Vegan");
+        TaskScheduler schedulerWithTwoVegans = new TaskScheduler(Arrays.asList(veganChef, veganChef2, grillChef, defaultChef));
+
+        Meal veganMeal = new Meal("Vegan Delight");
+        veganMeal.addIngredient(new Ingredient("tofu", 1));
+
+        String assignedChef = schedulerWithTwoVegans.assignTaskToChefAndReturnName(veganMeal);
+        assertEquals("Alice", assignedChef);
+        assertTrue(veganChef.getAssignedMeals().contains(veganMeal));
+        assertFalse(veganChef2.getAssignedMeals().contains(veganMeal));
     }
 }
