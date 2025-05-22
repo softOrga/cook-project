@@ -1,7 +1,7 @@
 package com.MyCooking.steps;
 
 import MyCooking.com.OrderCustomizationManager;
-import MyCooking.com.models.CustomerManager;
+
 import io.cucumber.java.en.*;
 
 import static org.junit.Assert.assertTrue;
