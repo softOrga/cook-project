@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class TaskSchedulerTest {
 
@@ -71,7 +72,7 @@ public class TaskSchedulerTest {
 
     @Test
     public void testDetectMealType() throws Exception {
-        TaskScheduler scheduler = new TaskScheduler(Arrays.asList());
+        TaskScheduler scheduler = new TaskScheduler(Collections.emptyList());
 
         java.lang.reflect.Method method = TaskScheduler.class.getDeclaredMethod("detectMealType", Meal.class);
         method.setAccessible(true);
@@ -104,7 +105,7 @@ public class TaskSchedulerTest {
 
     @Test
     public void testAssignTaskToChef_withEmptyChefsList() {
-        TaskScheduler emptyScheduler = new TaskScheduler(Arrays.asList());
+        TaskScheduler emptyScheduler = new TaskScheduler(Collections.emptyList());
         Meal meal = new Meal("Any Meal");
         meal.addIngredient(new Ingredient("rice", 1));
 
@@ -135,7 +136,6 @@ public class TaskSchedulerTest {
     @Test
     public void testAssignTaskToChefAndReturnName_withNullIngredients() {
         Meal meal = new Meal("Empty Meal");
-        
         String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
         assertEquals("Default Chef", assignedChef);
     }
@@ -152,5 +152,82 @@ public class TaskSchedulerTest {
         assertEquals("Alice", assignedChef);
         assertTrue(veganChef.getAssignedMeals().contains(veganMeal));
         assertFalse(veganChef2.getAssignedMeals().contains(veganMeal));
+    }
+
+    // ------------- إضافات جديدة --------------
+
+    @Test
+    public void testAssignMultipleMealsToChefs() {
+        Meal veganMeal1 = new Meal("Vegan Meal 1");
+        veganMeal1.addIngredient(new Ingredient("tofu", 1));
+        Meal veganMeal2 = new Meal("Vegan Meal 2");
+        veganMeal2.addIngredient(new Ingredient("lettuce", 1));
+        Meal grillMeal = new Meal("Grill Meal");
+        grillMeal.addIngredient(new Ingredient("chicken", 1));
+
+        scheduler.assignTaskToChef(veganMeal1);
+        scheduler.assignTaskToChef(veganMeal2);
+        scheduler.assignTaskToChef(grillMeal);
+
+        assertTrue(veganChef.getAssignedMeals().contains(veganMeal1));
+        assertTrue(veganChef.getAssignedMeals().contains(veganMeal2));
+        assertTrue(grillChef.getAssignedMeals().contains(grillMeal));
+    }
+
+    @Test
+    public void testAssignMealWithNullIngredientList() {
+        Meal meal = new Meal("Null Ingredients");
+        meal.setIngredients(null); 
+
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Default Chef", assignedChef);
+    }
+
+    @Test
+    public void testAssignMealWithEmptyIngredientList() {
+        Meal meal = new Meal("Empty Ingredients");
+        meal.setIngredients(Collections.emptyList());
+
+        String assignedChef = scheduler.assignTaskToChefAndReturnName(meal);
+        assertEquals("Default Chef", assignedChef);
+    }
+
+    @Test
+    public void testNoAssignmentToOtherChefs() {
+        Meal veganMeal = new Meal("Vegan Salad");
+        veganMeal.addIngredient(new Ingredient("tofu", 1));
+
+        scheduler.assignTaskToChef(veganMeal);
+
+        assertFalse(grillChef.getAssignedMeals().contains(veganMeal));
+        assertFalse(defaultChef.getAssignedMeals().contains(veganMeal));
+    }
+
+    @Test
+    public void testAssignChefWhenMultipleSpecializationsExist() {
+        Chef grillChef2 = new Chef("Dave", "Grill");
+        TaskScheduler schedulerWithTwoGrills = new TaskScheduler(Arrays.asList(veganChef, grillChef, grillChef2, defaultChef));
+
+        Meal grillMeal = new Meal("Grill Feast");
+        grillMeal.addIngredient(new Ingredient("chicken", 1));
+
+        String assignedChef = schedulerWithTwoGrills.assignTaskToChefAndReturnName(grillMeal);
+        assertEquals("Bob", assignedChef);
+        assertTrue(grillChef.getAssignedMeals().contains(grillMeal));
+        assertFalse(grillChef2.getAssignedMeals().contains(grillMeal));
+    }
+
+    @Test
+    public void testAssignTaskWithIngredientThatMatchesMultipleSpecializations() {
+        Chef multiSpecialistChef = new Chef("Frank", "Vegan, Grill");
+        TaskScheduler schedulerWithMultiSpecialist = new TaskScheduler(Arrays.asList(multiSpecialistChef, defaultChef));
+
+        Meal complexMeal = new Meal("Complex Dish");
+        complexMeal.addIngredient(new Ingredient("tofu", 1));
+        complexMeal.addIngredient(new Ingredient("chicken", 1));
+
+        String assignedChef = schedulerWithMultiSpecialist.assignTaskToChefAndReturnName(complexMeal);
+        assertEquals("Frank", assignedChef);
+        assertTrue(multiSpecialistChef.getAssignedMeals().contains(complexMeal));
     }
 }

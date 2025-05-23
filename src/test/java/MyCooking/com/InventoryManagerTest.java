@@ -77,7 +77,7 @@ public class InventoryManagerTest {
 
     @Test
     public void testUseIngredientSuccessAndFail() {
-        String ingredient = "milk"; // initial 2 units
+        String ingredient = "milk"; 
         assertTrue(inventory.useIngredient(ingredient));
         assertTrue(inventory.useIngredient(ingredient));
         assertFalse(inventory.useIngredient(ingredient));  

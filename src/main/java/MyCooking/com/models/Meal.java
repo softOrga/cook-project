@@ -62,4 +62,10 @@ public class Meal {
         sb.append("Ordered by Customer ID: ").append(customerId).append("\n");
         return sb.toString();
     }
+
+
+	public void setIngredients(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
 }
