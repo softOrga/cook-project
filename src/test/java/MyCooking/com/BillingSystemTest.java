@@ -110,8 +110,8 @@ public class BillingSystemTest {
         assertTrue(billingSystem.completeOrder("repeatCustomer", 10));
         assertTrue(billingSystem.completeOrder("repeatCustomer", 20));
         long count = billingSystem.getInvoices().stream()
-                        .filter(inv -> inv.getCustomerId().equals("repeatCustomer"))
-                        .count();
+                .filter(inv -> inv.getCustomerId().equals("repeatCustomer"))
+                .count();
         assertEquals(2, count);
     }
 
@@ -119,14 +119,14 @@ public class BillingSystemTest {
     public void testFinalizeOrderWithInvoices() {
         billingSystem.completeOrder("c1", 10);
         billingSystem.completeOrder("c2", 20);
-        billingSystem.finalizeOrder(); 
+        billingSystem.finalizeOrder();
         assertFalse(billingSystem.getInvoices().isEmpty());
     }
 
     @Test
     public void testFinalizeOrderNoInvoices() {
         billingSystem.clearInvoices();
-        billingSystem.finalizeOrder(); 
+        billingSystem.finalizeOrder();
         assertTrue(billingSystem.getInvoices().isEmpty());
     }
 
@@ -134,14 +134,14 @@ public class BillingSystemTest {
     public void testDisplayFinancialReportWithAdmin() {
         billingSystem.adminLogin("admin123");
         billingSystem.completeOrder("c1", 100);
-        billingSystem.displayFinancialReport();
+        billingSystem.displayFinancialReport(); 
     }
 
     @Test
     public void testDisplayFinancialReportWithoutAdmin() {
         billingSystem.clearInvoices();
         billingSystem.adminLogout();
-        billingSystem.displayFinancialReport();
+        billingSystem.displayFinancialReport(); // Expected no crash
     }
 
     @Test
@@ -153,14 +153,15 @@ public class BillingSystemTest {
 
     @Test
     public void testPasswordLoadedFromFileIfExists() throws Exception {
-        File passwordFile = new File("password.txt"); // نفس مكان تحميل كلاس BillingSystem
+        File passwordFile = new File("password.txt");
         try (FileWriter writer = new FileWriter(passwordFile)) {
             writer.write("adminFromFile\n");
         }
 
         BillingSystem systemWithFilePassword = new BillingSystem();
-        assertTrue(systemWithFilePassword.adminLogin("adminFromFile"));
+        assertTrue("Password from file should be accepted", systemWithFilePassword.adminLogin("adminFromFile"));
 
         passwordFile.delete();
     }
 }
+
