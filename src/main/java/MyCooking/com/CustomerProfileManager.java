@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class CustomerProfileManager {
 
-    private static final String CUSTOMER_NOT_FOUND_MSG = "Customer not found.";
-
     private Map<String, Customer> customers = new HashMap<>();
 
     public void addCustomer(Customer customer) {
@@ -30,7 +28,7 @@ public class CustomerProfileManager {
             System.out.println("Dietary Preference: " + customer.getDietaryPreference());
             System.out.println("Allergy: " + customer.getAllergy());
         } else {
-            System.out.println(CUSTOMER_NOT_FOUND_MSG);
+            System.out.println("Customer not found.");
         }
     }
 
@@ -42,22 +40,20 @@ public class CustomerProfileManager {
                 System.out.println("- " + order);
             }
         } else {
-            System.out.println(CUSTOMER_NOT_FOUND_MSG);
+            System.out.println("Customer not found.");
         }
     }
-
     public void suggestPersonalizedMeals(String customerId) {
         Customer customer = customers.get(customerId);
         if (customer != null) {
             System.out.println("Suggesting personalized meals based on the customer's preferences:");
             System.out.println("Diet: " + customer.getDietaryPreference());
             System.out.println("Allergy: " + customer.getAllergy());
-        } else {
-            System.out.println(CUSTOMER_NOT_FOUND_MSG);
         }
     }
-
     public Customer getCustomerByName(String name) {
         return customers.get(name);
     }
+
 }
+  
