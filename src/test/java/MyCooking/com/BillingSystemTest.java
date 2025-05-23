@@ -4,6 +4,8 @@ import MyCooking.com.models.Invoice;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -147,5 +149,18 @@ public class BillingSystemTest {
         billingSystem.completeOrder("c1", 10);
         billingSystem.clearInvoices();
         assertTrue(billingSystem.getInvoices().isEmpty());
+    }
+
+    @Test
+    public void testPasswordLoadedFromFileIfExists() throws Exception {
+        File passwordFile = new File("password.txt"); // نفس مكان تحميل كلاس BillingSystem
+        try (FileWriter writer = new FileWriter(passwordFile)) {
+            writer.write("adminFromFile\n");
+        }
+
+        BillingSystem systemWithFilePassword = new BillingSystem();
+        assertTrue(systemWithFilePassword.adminLogin("adminFromFile"));
+
+        passwordFile.delete();
     }
 }
