@@ -5,6 +5,7 @@ import java.util.*;
 
 public class CustomerManager {
     private static final String PROFILE_DIR = "customer_profiles/";
+    private static final String UNKNOWN_VALUE = "Unknown"; 
 
     public CustomerManager() {
         new File(PROFILE_DIR).mkdirs();
@@ -25,7 +26,7 @@ public class CustomerManager {
             String allergies = reader.readLine();
             String preferences = reader.readLine();
 
-            if (name == null || name.trim().isEmpty()) name = "Unknown";
+            if (name == null || name.trim().isEmpty()) name = UNKNOWN_VALUE;
             if (allergies == null || allergies.trim().isEmpty()) allergies = "";
             if (preferences == null || preferences.trim().isEmpty()) preferences = "";
 
@@ -35,14 +36,14 @@ public class CustomerManager {
             return customer;
         } catch (IOException e) {
             System.out.println("Failed to load profile for " + username + ". Creating a new one.");
-            return new Customer(username, "Unknown");
+            return new Customer(username, UNKNOWN_VALUE); 
         }
     }
 
     private Customer createNewProfile(Scanner scanner, File profileFile, String username) {
         System.out.print("Enter your full name: ");
         String name = scanner.nextLine();
-        if (name == null || name.trim().isEmpty()) name = "Unknown";
+        if (name == null || name.trim().isEmpty()) name = UNKNOWN_VALUE; 
 
         System.out.print("Enter your allergies (comma-separated): ");
         String allergies = scanner.nextLine();

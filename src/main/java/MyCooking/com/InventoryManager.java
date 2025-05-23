@@ -6,6 +6,9 @@ import MyCooking.com.models.Supplier;
 import MyCooking.com.models.SupplierService;
 
 public class InventoryManager {
+    private static final String PRICE_LABEL = " | Price: $";
+    private static final String DAYS_LABEL = " days";
+
     final Map<String, Integer> stock = new HashMap<>();
     private final SupplierService supplierService = new SupplierService();
     private final List<String> purchaseOrders = new ArrayList<>();
@@ -73,8 +76,8 @@ public class InventoryManager {
                 String ingredient = entry.getKey();
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 System.out.println("- " + ingredient + " is low. Best supplier: " + supplier.getName() +
-                        " | Price: $" + supplier.getPrice() +
-                        " | Delivery in: " + supplier.getDeliveryDays() + " days");
+                        PRICE_LABEL + supplier.getPrice() +
+                        " | Delivery in: " + supplier.getDeliveryDays() + DAYS_LABEL);
                 suggested.add(ingredient);
             }
         }
@@ -89,9 +92,9 @@ public class InventoryManager {
         for (String ingredient : stock.keySet()) {
             Supplier supplier = supplierService.getBestSupplier(ingredient);
             System.out.println("Ingredient: " + ingredient +
-                    " | Price: $" + supplier.getPrice() +
+                    PRICE_LABEL + supplier.getPrice() +
                     " | Supplier: " + supplier.getName() +
-                    " | Delivery in: " + supplier.getDeliveryDays() + " days");
+                    " | Delivery in: " + supplier.getDeliveryDays() + DAYS_LABEL);
         }
     }
 
@@ -134,8 +137,8 @@ public class InventoryManager {
                 Supplier supplier = supplierService.getBestSupplier(ingredient);
                 String order = "Order: " + ingredient +
                         " | From: " + supplier.getName() +
-                        " | Price: $" + supplier.getPrice() +
-                        " | ETA: " + supplier.getDeliveryDays() + " days";
+                        PRICE_LABEL + supplier.getPrice() +
+                        " | ETA: " + supplier.getDeliveryDays() + DAYS_LABEL;
                 purchaseOrders.add(order);
                 System.out.println(order);
             }
@@ -167,5 +170,3 @@ public class InventoryManager {
         }
     }
 }
-
-
