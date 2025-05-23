@@ -31,15 +31,15 @@ public class BillingSystem {
                 adminPassword = "";
                 return;
             }
-            Scanner scanner = new Scanner(input);
-            if (scanner.hasNextLine()) {
-                adminPassword = scanner.nextLine().trim();
-                logger.info("Admin password loaded from file.");
-            } else {
-                logger.warning("password.txt is empty.");
-                adminPassword = "";
+            try (Scanner scanner = new Scanner(input)) {
+                if (scanner.hasNextLine()) {
+                    adminPassword = scanner.nextLine().trim();
+                    logger.info("Admin password loaded from file.");
+                } else {
+                    logger.warning("password.txt is empty.");
+                    adminPassword = "";
+                }
             }
-            scanner.close();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error reading admin password file", e);
             adminPassword = "";
@@ -47,8 +47,12 @@ public class BillingSystem {
     }
 
     public boolean completeOrder(String customerId, double amount) {
-        if (customerId == null || customerId.isEmpty() || amount <= 0) {
-            logger.warning("Invalid customer ID or amount.");
+        if (customerId == null || customerId.isEmpty()) {
+            logger.warning("Invalid customer ID provided.");
+            return false;
+        }
+        if (amount <= 0) {
+            logger.warning("Invalid amount provided.");
             return false;
         }
         Invoice invoice = new Invoice(customerId, amount);
@@ -72,8 +76,12 @@ public class BillingSystem {
     }
 
     public boolean generateAndSendInvoice(String customerId, double amount) {
-        if (customerId == null || customerId.isEmpty() || amount <= 0) {
-            logger.warning("Invalid customer ID or amount.");
+        if (customerId == null || customerId.isEmpty()) {
+            logger.warning("Invalid customer ID provided.");
+            return false;
+        }
+        if (amount <= 0) {
+            logger.warning("Invalid amount provided.");
             return false;
         }
         Invoice invoice = new Invoice(customerId, amount);
