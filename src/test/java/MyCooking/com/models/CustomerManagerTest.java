@@ -18,7 +18,6 @@ public class CustomerManagerTest {
 
     @After
     public void tearDown() {
-      
         File dir = new File(TEST_DIR);
         if (dir.exists()) {
             for (File file : dir.listFiles()) {
@@ -41,7 +40,6 @@ public class CustomerManagerTest {
 
     @Test
     public void testLoadExistingProfile() throws IOException {
-       
         File profile = new File(TEST_DIR + "jane_test.txt");
         profile.getParentFile().mkdirs();
         try (PrintWriter out = new PrintWriter(profile)) {
@@ -59,6 +57,22 @@ public class CustomerManagerTest {
     }
 
     @Test
+    public void testLoadCorruptProfile() throws IOException {
+        File profile = new File(TEST_DIR + "corrupt_user.txt");
+        profile.getParentFile().mkdirs();
+        try (PrintWriter out = new PrintWriter(profile)) {
+            out.println(); // name = null
+        }
+
+        Scanner scanner = new Scanner("");
+        Customer customer = manager.getOrCreateCustomerProfile(scanner, "corrupt_user");
+
+        assertEquals("Unknown", customer.getCustomerName());
+        assertEquals("", customer.getAllergy());
+        assertEquals("", customer.getDietaryPreference());
+    }
+
+    @Test
     public void testCreateCustomMeal() {
         String input = "Healthy Bowl\nTomato\nLettuce\nCheese\ndone\n";
         Scanner scanner = new Scanner(input);
@@ -69,6 +83,19 @@ public class CustomerManagerTest {
         assertEquals("Healthy Bowl", meal.getName());
         assertEquals(3, meal.getIngredients().size());
         assertEquals("Tomato", meal.getIngredients().get(0).getName());
+    }
+
+    @Test
+    public void testCreateCustomMealWithEmptyIngredient() {
+        String input = "My Dish\n\n\nOnion\n\ndone\n";
+        Scanner scanner = new Scanner(input);
+        Customer customer = new Customer("user2", "Test User");
+
+        Meal meal = manager.createCustomMeal(scanner, customer);
+
+        assertEquals("My Dish", meal.getName());
+        assertEquals(1, meal.getIngredients().size());
+        assertEquals("Onion", meal.getIngredients().get(0).getName());
     }
 
     @Test
@@ -88,5 +115,15 @@ public class CustomerManagerTest {
         assertTrue(output.contains("Nuts"));
         assertTrue(output.contains("Vegan"));
     }
+
+    @Test
+    public void testCreateNewProfileWithEmptyInput() {
+        String input = "\n\n\n";
+        Scanner scanner = new Scanner(input);
+        Customer customer = manager.getOrCreateCustomerProfile(scanner, "empty_input_user");
+
+        assertEquals("Unknown", customer.getCustomerName());
+        assertEquals("", customer.getAllergy());
+        assertEquals("", customer.getDietaryPreference());
+    }
 }
- 
