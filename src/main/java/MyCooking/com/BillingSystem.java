@@ -18,7 +18,6 @@ public class BillingSystem {
     }
 
     private void loadAdminPassword() {
-        
         String envPassword = System.getenv("ADMIN_PASSWORD");
         if (envPassword != null && !envPassword.trim().isEmpty()) {
             adminPassword = envPassword.trim();
@@ -26,7 +25,6 @@ public class BillingSystem {
             return;
         }
 
-    
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("password.txt")) {
             if (input == null) {
                 logger.warning("password.txt not found in resources folder");
@@ -48,10 +46,9 @@ public class BillingSystem {
         }
     }
 
-
     public boolean completeOrder(String customerId, double amount) {
-        if (customerId == null || customerId.isEmpty()) {
-            logger.warning("Invalid customer ID provided.");
+        if (customerId == null || customerId.isEmpty() || amount <= 0) {
+            logger.warning("Invalid customer ID or amount.");
             return false;
         }
         Invoice invoice = new Invoice(customerId, amount);
@@ -75,8 +72,8 @@ public class BillingSystem {
     }
 
     public boolean generateAndSendInvoice(String customerId, double amount) {
-        if (customerId == null || customerId.isEmpty()) {
-            logger.warning("Invalid customer ID provided.");
+        if (customerId == null || customerId.isEmpty() || amount <= 0) {
+            logger.warning("Invalid customer ID or amount.");
             return false;
         }
         Invoice invoice = new Invoice(customerId, amount);
